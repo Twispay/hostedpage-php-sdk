@@ -1,18 +1,18 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Item;
 
 /**
- * Class TwispayCardTransactionMode
+ * Class ItemType
  *
- * @package Twispay
+ * @package Twispay\Entity\Item
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayCardTransactionMode
+class ItemType
 {
-    const AUTHENTICATION = 'auth';
-    const AUTHENTICATION_AND_CAPTURE = 'authAndCapture';
+    const PHYSICAL = 'physical';
+    const DIGITAL = 'digital';
 
     /**
      * Method isValid
@@ -26,7 +26,7 @@ class TwispayCardTransactionMode
         if (empty($itemType)) {
             return false;
         }
-        $list = [self::AUTHENTICATION, self::AUTHENTICATION_AND_CAPTURE];
+        $list = [self::PHYSICAL, self::DIGITAL];
         return in_array($itemType, $list);
     }
 }

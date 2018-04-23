@@ -1,18 +1,21 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Item;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayItemLevel3
+ * Class ItemLevel3
  *
- * @package Twispay
+ * @package Twispay\Entity\Item
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayItemLevel3 extends TwispayItem
+class ItemLevel3 extends Item
 {
-    /** @var string $twispayItemType Item type */
-    protected $twispayItemType;
+    /** @var string $itemType Item type @see ItemType */
+    protected $itemType;
 
     /** @var string $code Item code */
     protected $code;
@@ -49,7 +52,7 @@ class TwispayItemLevel3 extends TwispayItem
             $unitPrice,
             $units
         );
-        $this->setTwispayItemType($twispayItemType)
+        $this->setItemType($twispayItemType)
             ->setCode($code)
             ->setDescription($description)
             ->setVatPercent($vatPercent);
@@ -60,21 +63,21 @@ class TwispayItemLevel3 extends TwispayItem
      *
      * @return string
      */
-    public function getTwispayItemType()
+    public function getItemType()
     {
-        return $this->twispayItemType;
+        return $this->itemType;
     }
 
     /**
      * Method setTwispayItemType
      *
-     * @param string $twispayItemType Item type
+     * @param string $itemType Item type
      *
      * @return $this
      */
-    public function setTwispayItemType($twispayItemType)
+    public function setItemType($itemType)
     {
-        $this->twispayItemType = $twispayItemType;
+        $this->itemType = $itemType;
         return $this;
     }
 
@@ -157,7 +160,7 @@ class TwispayItemLevel3 extends TwispayItem
         return array_merge(
             parent::toArray(),
             [
-                'type' => $this->getTwispayItemType(),
+                'type' => $this->getItemType(),
                 'code' => $this->getCode(),
                 'vatPercent' => $this->getVatPercent(),
                 'itemDescription' => $this->getDescription(),
@@ -168,38 +171,38 @@ class TwispayItemLevel3 extends TwispayItem
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         parent::validate();
 
-        if (strlen($this->twispayItemType) == 0) {
-            throw new TwispayException('*twispayItemType* is a required field', TwispayErrorCode::ITEM_TYPE_MISSING);
+        if (strlen($this->itemType) == 0) {
+            throw new ValidationException('*itemType* is a required field', ErrorCode::ITEM_TYPE_MISSING);
         }
-        if (TwispayItemType::isValid($this->twispayItemType)) {
-            throw new TwispayException('*twispayItemType* is invalid', TwispayErrorCode::ITEM_TYPE_INVALID);
+        if (ItemType::isValid($this->itemType)) {
+            throw new ValidationException('*itemType* is invalid', ErrorCode::ITEM_TYPE_INVALID);
         }
 
         if (strlen($this->code) == 0) {
-            throw new TwispayException('*code* is a required field', TwispayErrorCode::ITEM_CODE_MISSING);
+            throw new ValidationException('*code* is a required field', ErrorCode::ITEM_CODE_MISSING);
         }
         if (mb_strlen($this->code, 'UTF-8') > 64) {
-            throw new TwispayException('*code* is invalid, can have maximum 64 characters', TwispayErrorCode::ITEM_CODE_INVALID);
+            throw new ValidationException('*code* is invalid, can have maximum 64 characters', ErrorCode::ITEM_CODE_INVALID);
         }
 
         if (strlen($this->description) == 0) {
-            throw new TwispayException('*description* is a required field', TwispayErrorCode::ITEM_DESCRIPTION_MISSING);
+            throw new ValidationException('*description* is a required field', ErrorCode::ITEM_DESCRIPTION_MISSING);
         }
         if (mb_strlen($this->description, 'UTF-8') > 500) {
-            throw new TwispayException('*description* is invalid, can have maximum 500 characters', TwispayErrorCode::ITEM_DESCRIPTION_INVALID);
+            throw new ValidationException('*description* is invalid, can have maximum 500 characters', ErrorCode::ITEM_DESCRIPTION_INVALID);
         }
 
         if (strlen($this->vatPercent) == 0) {
-            throw new TwispayException('*vatPercent* is a required field', TwispayErrorCode::ITEM_VAT_PERCENT_MISSING);
+            throw new ValidationException('*vatPercent* is a required field', ErrorCode::ITEM_VAT_PERCENT_MISSING);
         }
         if (preg_match('/^[0-9]{1,8}(\.+[0-9]{0,4})?$/', $this->vatPercent) != 1) {
-            throw new TwispayException('*vatPercent* is invalid, does not match /^[0-9]{1,8}(\.+[0-9]{0,4})?$/', TwispayErrorCode::ITEM_VAT_PERCENT_INVALID);
+            throw new ValidationException('*vatPercent* is invalid, does not match /^[0-9]{1,8}(\.+[0-9]{0,4})?$/', ErrorCode::ITEM_VAT_PERCENT_INVALID);
         }
     }
 }

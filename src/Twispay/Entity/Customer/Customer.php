@@ -1,15 +1,18 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Customer;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayCustomer
+ * Class Customer
  *
- * @package Twispay
+ * @package Twispay\Entity\Customer
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayCustomer
+class Customer
 {
     /** @var string $identifier Customer ID assigned by merchant with max 92 chars */
     protected $identifier;
@@ -20,11 +23,11 @@ class TwispayCustomer
     /** @var string|null $lastName */
     protected $lastName;
 
-    /** @var string|null $twispayCountry Use ISO 3166-1 alpha-2 codes @see TwispayCountry */
-    protected $twispayCountry;
+    /** @var string|null $country Use ISO 3166-1 alpha-2 codes @see Country */
+    protected $country;
 
-    /** @var string|null $twispayState Use two letter ISO 3166-2:US and ISO 3166-2:CA for CA @see TwispayState */
-    protected $twispayState;
+    /** @var string|null $state Use two letter ISO 3166-2:US and ISO 3166-2:CA for CA @see Sate */
+    protected $state;
 
     /** @var string|null $city */
     protected $city;
@@ -127,48 +130,48 @@ class TwispayCustomer
     }
 
     /**
-     * Method getTwispayCountry
+     * Method getCountry
      *
      * @return string|null
      */
-    public function getTwispayCountry()
+    public function getCountry()
     {
-        return $this->twispayCountry;
+        return $this->country;
     }
 
     /**
-     * Method setTwispayCountry
+     * Method setCountry
      *
-     * @param string|null $twispayCountry Use ISO 3166-1 alpha-2 codes @see TwispayCountry
+     * @param string|null $country Use ISO 3166-1 alpha-2 codes @see Country
      *
      * @return $this
      */
-    public function setTwispayCountry($twispayCountry)
+    public function setCountry($country)
     {
-        $this->twispayCountry = $twispayCountry;
+        $this->country = $country;
         return $this;
     }
 
     /**
-     * Method getTwispayState
+     * Method getState
      *
      * @return string|null
      */
-    public function getTwispayState()
+    public function getState()
     {
-        return $this->twispayState;
+        return $this->state;
     }
 
     /**
-     * Method setTwispayState
+     * Method setState
      *
-     * @param string|null $twispayState Use two letter ISO 3166-2:US and ISO 3166-2:CA for CA @see TwispayState
+     * @param string|null $state Use two letter ISO 3166-2:US and ISO 3166-2:CA for CA @see State
      *
      * @return $this
      */
-    public function setTwispayState($twispayState)
+    public function setState($state)
     {
-        $this->twispayState = $twispayState;
+        $this->state = $state;
         return $this;
     }
 
@@ -334,8 +337,8 @@ class TwispayCustomer
             'identifier' => $this->identifier,
             'firstName' => $this->firstName,
             'lastName' => $this->lastName,
-            'country' => $this->twispayCountry,
-            'state' => $this->twispayState,
+            'country' => $this->country,
+            'state' => $this->state,
             'city' => $this->city,
             'address' => $this->address,
             'zipCode' => $this->zipCode,
@@ -348,78 +351,78 @@ class TwispayCustomer
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         if (strlen($this->identifier) == 0) {
-            throw new TwispayException('*identifier* is a required field', TwispayErrorCode::CUSTOMER_ID_MISSING);
+            throw new ValidationException('*identifier* is a required field', ErrorCode::CUSTOMER_ID_MISSING);
         }
         if (preg_match('/^[0-9a-z\-_\.@\s]{1,92}$/i', $this->identifier) != 1) {
-            throw new TwispayException('*identifier* is invalid, does not match /^[0-9a-z\-_\.@\s]{1,92}$/i', TwispayErrorCode::CUSTOMER_ID_INVALID);
+            throw new ValidationException('*identifier* is invalid, does not match /^[0-9a-z\-_\.@\s]{1,92}$/i', ErrorCode::CUSTOMER_ID_INVALID);
         }
 
         if (mb_strlen($this->firstName, 'UTF-8') > 100) {
-            throw new TwispayException('*firstName* is invalid, can have maximum 100 characters', TwispayErrorCode::FIRST_NAME_INVALID);
+            throw new ValidationException('*firstName* is invalid, can have maximum 100 characters', ErrorCode::FIRST_NAME_INVALID);
         }
         if (preg_match('/[\x{0}-\x{1F}\x{7F}-\x{9F}\p{Cn}\p{Co}\p{Cs}]/u', $this->firstName) == 1) {
-            throw new TwispayException('*firstName* is invalid, malformed UTF-8 characters', TwispayErrorCode::FIRST_NAME_INVALID);
+            throw new ValidationException('*firstName* is invalid, malformed UTF-8 characters', ErrorCode::FIRST_NAME_INVALID);
         }
 
         if (mb_strlen($this->lastName, 'UTF-8') > 100) {
-            throw new TwispayException('*lastName* is invalid, can have maximum 100 characters', TwispayErrorCode::LAST_NAME_INVALID);
+            throw new ValidationException('*lastName* is invalid, can have maximum 100 characters', ErrorCode::LAST_NAME_INVALID);
         }
         if (preg_match('/[\x{0}-\x{1F}\x{7F}-\x{9F}\p{Cn}\p{Co}\p{Cs}]/u', $this->lastName) == 1) {
-            throw new TwispayException('*lastName* is invalid, malformed UTF-8 characters', TwispayErrorCode::LAST_NAME_INVALID);
+            throw new ValidationException('*lastName* is invalid, malformed UTF-8 characters', ErrorCode::LAST_NAME_INVALID);
         }
 
-        if (strlen($this->twispayCountry) != 0) {
-            if (!TwispayCountry::isValid($this->twispayCountry)) {
-                throw new TwispayException('*twispayCountry* is invalid', TwispayErrorCode::COUNTRY_INVALID);
+        if (strlen($this->country) != 0) {
+            if (!Country::isValid($this->country)) {
+                throw new ValidationException('*country* is invalid', ErrorCode::COUNTRY_INVALID);
             }
-            if (!TwispayState::isValid($this->twispayState, $this->twispayCountry)) {
-                throw new TwispayException('*twispayState* is invalid', TwispayErrorCode::STATE_INVALID);
+            if (!State::isValid($this->state, $this->country)) {
+                throw new ValidationException('*country* is invalid', ErrorCode::STATE_INVALID);
             }
-        } elseif (strlen($this->twispayState) != 0) {
-            throw new TwispayException('*twispayState* is invalid, *twispayCountry* must be set', TwispayErrorCode::STATE_INVALID);
+        } elseif (strlen($this->state) != 0) {
+            throw new ValidationException('*state* is invalid, *state* must be set', ErrorCode::STATE_INVALID);
         }
 
         if (mb_strlen($this->city, 'UTF-8') > 100) {
-            throw new TwispayException('*city* is invalid, can have maximum 100 characters', TwispayErrorCode::CITY_INVALID);
+            throw new ValidationException('*city* is invalid, can have maximum 100 characters', ErrorCode::CITY_INVALID);
         }
         if (preg_match('/[\x{0}-\x{1F}\x{7F}-\x{9F}\p{Cn}\p{Co}\p{Cs}]/u', $this->city) == 1) {
-            throw new TwispayException('*city* is invalid, malformed UTF-8 characters', TwispayErrorCode::CITY_INVALID);
+            throw new ValidationException('*city* is invalid, malformed UTF-8 characters', ErrorCode::CITY_INVALID);
         }
 
         if (mb_strlen($this->address, 'UTF-8') > 150) {
-            throw new TwispayException('*address* is invalid, can have maximum 150 characters', TwispayErrorCode::ADDRESS_INVALID);
+            throw new ValidationException('*address* is invalid, can have maximum 150 characters', ErrorCode::ADDRESS_INVALID);
         }
         if (preg_match('/[\x{0}-\x{1F}\x{7F}-\x{9F}\p{Cn}\p{Co}\p{Cs}]/u', $this->address) == 1) {
-            throw new TwispayException('*address* is invalid, malformed UTF-8 characters', TwispayErrorCode::ADDRESS_INVALID);
+            throw new ValidationException('*address* is invalid, malformed UTF-8 characters', ErrorCode::ADDRESS_INVALID);
         }
 
         if (preg_match('/^[0-9a-z\s\-]{0,100}$/i', $this->zipCode) != 1) {
-            throw new TwispayException('*zipCode* is invalid, does not match /^[0-9a-z\s\-]{0,100}$/i', TwispayErrorCode::ZIP_INVALID);
+            throw new ValidationException('*zipCode* is invalid, does not match /^[0-9a-z\s\-]{0,100}$/i', ErrorCode::ZIP_INVALID);
         }
 
         if (preg_match('/^\+?[0-9]{0,16}$/', $this->phone) != 1) {
-            throw new TwispayException('*phone* is invalid, does not match /^\+?[0-9]{0,16}$/', TwispayErrorCode::PHONE_INVALID);
+            throw new ValidationException('*phone* is invalid, does not match /^\+?[0-9]{0,16}$/', ErrorCode::PHONE_INVALID);
         }
 
         if (
             (strlen($this->email) != 0)
             && !filter_var($this->email, FILTER_VALIDATE_EMAIL)
         ) {
-            throw new TwispayException('*email* is invalid', TwispayErrorCode::EMAIL_INVALID);
+            throw new ValidationException('*email* is invalid', ErrorCode::EMAIL_INVALID);
         }
 
         foreach ($this->customerTags as $customerTag) {
             if (preg_match('/^[0-9a-z\-_\.]{1,100}$/i', $customerTag) != 1) {
-                throw new TwispayException('*customerTags* is invalid, does not match /^[0-9a-z\-_\.]{1,100}$/i', TwispayErrorCode::TAG_INVALID);
+                throw new ValidationException('*customerTags* is invalid, does not match /^[0-9a-z\-_\.]{1,100}$/i', ErrorCode::TAG_INVALID);
             }
         }
         if (count($this->customerTags) != count(array_unique($this->customerTags))) {
-            throw new TwispayException('*customerTags* is invalid, must be unique', TwispayErrorCode::TAG_INVALID);
+            throw new ValidationException('*customerTags* is invalid, must be unique', ErrorCode::TAG_INVALID);
         }
     }
 }

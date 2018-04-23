@@ -1,15 +1,20 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Entity\Item\Item;
+use Twispay\Entity\Item\Items;
+use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayOrderAbstract
+ * Class OrderAbstract
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-abstract class TwispayOrderAbstract implements TwispayOrderInterface
+abstract class OrderAbstract implements OrderInterface
 {
     /** @var string $orderType */
     protected $orderType;
@@ -20,14 +25,14 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
     /** @var float $amount Greater than zero */
     protected $amount;
 
-    /** @var string $twispayCurrency Use ISO 4217 three letter code @see TwispayCurrency */
-    protected $twispayCurrency;
+    /** @var string $currency Use ISO 4217 three letter code @see Currency */
+    protected $currency;
 
     /** @var string|null $description Required when no $twispayItems defined with max 77056 chars */
     protected $description;
 
-    /** @var TwispayItems $twispayItems */
-    protected $twispayItems;
+    /** @var Items $items */
+    protected $items;
 
     /** @var string[] $orderTags Unique order tags */
     protected $orderTags;
@@ -36,22 +41,22 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
     protected $backUrl;
 
     /**
-     * TwispayOrderAbstract constructor.
+     * OrderAbstract constructor.
      *
      * @param string $orderId
      * @param float $amount
-     * @param string $twispayCurrency
+     * @param string $currency
      */
     public function __construct(
         $orderId,
         $amount,
-        $twispayCurrency
+        $currency
     )
     {
         $this->setOrderId($orderId)
             ->setAmount($amount)
-            ->setTwispayCurrency($twispayCurrency)
-            ->setTwispayItems(new TwispayItems())
+            ->setCurrency($currency)
+            ->setItems(new Items())
             ->setOrderTags([]);
     }
 
@@ -112,25 +117,25 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
     }
 
     /**
-     * Method getTwispayCurrency
+     * Method getCurrency
      *
      * @return string
      */
-    public function getTwispayCurrency()
+    public function getCurrency()
     {
-        return $this->twispayCurrency;
+        return $this->currency;
     }
 
     /**
-     * Method setTwispayCurrency
+     * Method setCurrency
      *
-     * @param string $twispayCurrency Use ISO 4217 three letter code @see TwispayCurrency
+     * @param string $currency Use ISO 4217 three letter code @see Currency
      *
      * @return $this
      */
-    public function setTwispayCurrency($twispayCurrency)
+    public function setCurrency($currency)
     {
-        $this->twispayCurrency = $twispayCurrency;
+        $this->currency = $currency;
         return $this;
     }
 
@@ -158,38 +163,38 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
     }
 
     /**
-     * Method getTwispayItems
+     * Method getItems
      *
-     * @return TwispayItems
+     * @return Items
      */
-    public function getTwispayItems()
+    public function getItems()
     {
-        return $this->twispayItems;
+        return $this->items;
     }
 
     /**
-     * Method setTwispayItems
+     * Method setItems
      *
-     * @param TwispayItems $twispayItems
+     * @param Items $items
      *
      * @return $this
      */
-    public function setTwispayItems(TwispayItems $twispayItems)
+    public function setItems(Items $items)
     {
-        $this->twispayItems = $twispayItems;
+        $this->items = $items;
         return $this;
     }
 
     /**
-     * Method addTwispayItem
+     * Method addItem
      *
-     * @param TwispayItem $twispayItem
+     * @param Item $item
      *
      * @return $this
      */
-    public function addTwispayItem(TwispayItem $twispayItem)
+    public function addItem(Item $item)
     {
-        $this->twispayItems[] = $twispayItem;
+        $this->items[] = $item;
         return $this;
     }
 
@@ -264,68 +269,68 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
                 'orderType' => $this->orderType,
                 'orderId' => $this->orderId,
                 'amount' => $this->amount,
-                'currency' => $this->twispayCurrency,
+                'currency' => $this->currency,
                 'description' => $this->description,
                 'orderTags' => array_values($this->orderTags),
                 'backUrl' => $this->backUrl,
             ],
-            $this->twispayItems->toArray()
+            $this->items->toArray()
         );
     }
 
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         if (strlen($this->orderId) == 0) {
-            throw new TwispayException('*orderId* is a required field', TwispayErrorCode::ORDER_ID_MISSING);
+            throw new ValidationException('*orderId* is a required field', ErrorCode::ORDER_ID_MISSING);
         }
         if (preg_match('/^[\w\-.]{1,32}$/', $this->orderId) != 1) {
-            throw new TwispayException('*orderId* is invalid, does not match /^[\w\-.]{1,32}$/', TwispayErrorCode::ORDER_ID_INVALID);
+            throw new ValidationException('*orderId* is invalid, does not match /^[\w\-.]{1,32}$/', ErrorCode::ORDER_ID_INVALID);
         }
 
         if (strlen($this->amount) == 0) {
-            throw new TwispayException('*amount* is a required field', TwispayErrorCode::AMOUNT_MISSING);
+            throw new ValidationException('*amount* is a required field', ErrorCode::AMOUNT_MISSING);
         }
         if (
             ((float)$this->amount < 0.01)
             || (preg_match('/^[0-9]{1,13}(\.[0-9]{1,2})?$/', $this->amount) != 1)
         ) {
-            throw new TwispayException('*amount* is invalid, must be greater than 0.01 and match /^[0-9]{1,13}(\.[0-9]{1,2})?$/', TwispayErrorCode::AMOUNT_INVALID);
+            throw new ValidationException('*amount* is invalid, must be greater than 0.01 and match /^[0-9]{1,13}(\.[0-9]{1,2})?$/', ErrorCode::AMOUNT_INVALID);
         }
 
-        if (strlen($this->twispayCurrency) == 0) {
-            throw new TwispayException('*twispayCurrency* is a required field', TwispayErrorCode::CURRENCY_MISSING);
+        if (strlen($this->currency) == 0) {
+            throw new ValidationException('*currency* is a required field', ErrorCode::CURRENCY_MISSING);
         }
-        if (!TwispayCurrency::isValid($this->twispayCurrency)) {
-            throw new TwispayException('*twispayCurrency* is invalid', TwispayErrorCode::CURRENCY_INVALID);
+        if (!Currency::isValid($this->currency)) {
+            throw new ValidationException('*currency* is invalid', ErrorCode::CURRENCY_INVALID);
         }
 
         if (
             (strlen($this->description) == 0)
-            && (count($this->twispayItems) == 0)
+            && (count($this->items) == 0)
         ) {
-            throw new TwispayException('*description* is a required field when there are no *twispayItems*', TwispayErrorCode::ORDER_DESCRIPTION_MISSING);
+            throw new ValidationException('*description* is a required field when there are no *items*', ErrorCode::ORDER_DESCRIPTION_MISSING);
         }
         if (mb_strlen($this->description, 'UTF-8') > 65535) {
-            throw new TwispayException('*description* is invalid, can have maximum 65535 characters', TwispayErrorCode::ORDER_DESCRIPTION_INVALID);
+            throw new ValidationException('*description* is invalid, can have maximum 65535 characters', ErrorCode::ORDER_DESCRIPTION_INVALID);
         }
         if (preg_match('/[\x{0}-\x{8}\x{E}-\x{1F}\x{7F}-\x{9F}\p{Cn}\p{Co}\p{Cs}]/u', $this->description) == 1) {
-            throw new TwispayException('*description* is invalid, malformed UTF-8 characters', TwispayErrorCode::ORDER_DESCRIPTION_INVALID);
+            throw new ValidationException('*description* is invalid, malformed UTF-8 characters', ErrorCode::ORDER_DESCRIPTION_INVALID);
         }
 
-        $this->twispayItems->validate();
+        $this->items->validate();
 
         foreach ($this->orderTags as $orderTag) {
             if (preg_match('/^[0-9a-z\-_\.]{1,100}$/i', $orderTag) != 1) {
-                throw new TwispayException('*orderTags* is invalid, does not match /^[0-9a-z\-_\.]{1,100}$/i', TwispayErrorCode::TAG_INVALID);
+                throw new ValidationException('*orderTags* is invalid, does not match /^[0-9a-z\-_\.]{1,100}$/i', ErrorCode::TAG_INVALID);
             }
         }
         if (count($this->orderTags) != count(array_unique($this->orderTags))) {
-            throw new TwispayException('*orderTags* is invalid, must be unique', TwispayErrorCode::TAG_INVALID);
+            throw new ValidationException('*orderTags* is invalid, must be unique', ErrorCode::TAG_INVALID);
         }
 
         if (
@@ -335,7 +340,7 @@ abstract class TwispayOrderAbstract implements TwispayOrderInterface
                 || !filter_var($this->backUrl, FILTER_VALIDATE_URL)
             )
         ) {
-            throw new TwispayException('*backUrl* is invalid, must be valid URL with maximum 250 characters', TwispayErrorCode::URL_INVALID);
+            throw new ValidationException('*backUrl* is invalid, must be valid URL with maximum 250 characters', ErrorCode::URL_INVALID);
         }
     }
 }

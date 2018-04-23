@@ -1,15 +1,15 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity;
 
 /**
- * Class TwispayErrorCode
+ * Class ErrorCode
  *
- * @package Twispay
+ * @package Twispay\Entity
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayErrorCode
+class ErrorCode
 {
     const SITE_ID_MISSING = 101;
     const SITE_ID_INVALID = 102;

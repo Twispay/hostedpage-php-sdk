@@ -3,24 +3,24 @@
 namespace Twispay;
 
 /**
- * Class TwispayPaymentForm
+ * Class PaymentForm
  *
  * @package Twispay
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayPaymentForm
+class PaymentForm
 {
     /** @var string $paymentUrl The URL of the payment page */
-    static $paymentUrl = 'https://secure.twispay.lh';
+    static $paymentUrl = 'https://secure.twispay.com';
 
     /** @var string $popupJsUrl The URL of the JavaScript for a Pop-Up payment page */
-    static $popupJsUrl = 'https://secure.twispay.lh/js/sdk/v1/TwisPay.js';
+    static $popupJsUrl = 'https://secure.twispay.com/js/sdk/v1/TwisPay.js';
 
     /** @var string $popupCssUrl The URL of the CSS for a Pop-Up payment page */
-    static $popupCssUrl = 'https://secure.twispay.lh/js/sdk/v1/TwisPay.css';
+    static $popupCssUrl = 'https://secure.twispay.com/js/sdk/v1/TwisPay.css';
 
-    /** @var TwispayPayment $twispayPayment */
+    /** @var Payment $twispayPayment */
     protected $twispayPayment;
 
     /** @var bool $isPopup */
@@ -29,11 +29,11 @@ class TwispayPaymentForm
     /**
      * TwispayPaymentForm constructor.
      *
-     * @param TwispayPayment $twispayPayment
+     * @param Payment $twispayPayment
      * @param bool $isPopup
      */
     public function __construct(
-        TwispayPayment $twispayPayment,
+        Payment $twispayPayment,
         $isPopup = false
     )
     {
@@ -44,7 +44,7 @@ class TwispayPaymentForm
     /**
      * Method TwispayPayment
      *
-     * @return TwispayPayment
+     * @return Payment
      */
     public function getTwispayPayment()
     {
@@ -54,11 +54,11 @@ class TwispayPaymentForm
     /**
      * Method setTwispayPayment
      *
-     * @param TwispayPayment $twispayPayment
+     * @param Payment $twispayPayment
      *
      * @return $this
      */
-    public function setTwispayPayment(TwispayPayment $twispayPayment)
+    public function setTwispayPayment(Payment $twispayPayment)
     {
         $this->twispayPayment = $twispayPayment;
         return $this;
@@ -137,7 +137,13 @@ class TwispayPaymentForm
         foreach ($formData as $field => $value) {
             if (is_array($value)) {
                 foreach ($value as $key => $entry) {
-                    $form .= '<input type="hidden" name="' . $field . '[' . $key . ']" value="' . htmlspecialchars($entry) . '">' . "\n";
+                    if (is_array($entry)) {
+                        foreach ($entry as $subKey => $subValue) {
+                            $form .= '<input type="hidden" name="' . $field . '[' . $key . ']' . '[' . $subKey . ']" value="' . htmlspecialchars($subValue) . '">' . "\n";
+                        }
+                    } else {
+                        $form .= '<input type="hidden" name="' . $field . '[' . $key . ']" value="' . htmlspecialchars($entry) . '">' . "\n";
+                    }
                 }
                 continue;
             }

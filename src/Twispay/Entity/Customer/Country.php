@@ -1,15 +1,15 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Customer;
 
 /**
- * Class TwispayCountry
+ * Class Country
  *
- * @package Twispay
+ * @package Twispay\Entity\Customer
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayCountry
+class Country
 {
     /**
      * Method isValid

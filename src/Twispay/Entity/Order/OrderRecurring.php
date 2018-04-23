@@ -1,21 +1,24 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Exception\ValidationException;
 
 /**
  * Class TwispayOrderRecurring
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayOrderRecurring extends TwispayOrderAbstract
+class OrderRecurring extends OrderAbstract
 {
     /** @var string $orderType */
     protected $orderType = 'recurring';
 
-    /** @var string $twispayIntervalType */
-    protected $twispayIntervalType;
+    /** @var string $intervalType */
+    protected $intervalType;
 
     /** @var int $intervalValue */
     protected $intervalValue;
@@ -27,25 +30,25 @@ class TwispayOrderRecurring extends TwispayOrderAbstract
     protected $firstBillDate;
 
     /**
-     * Method getTwispayIntervalType
+     * Method getIntervalType
      *
      * @return string
      */
-    public function getTwispayIntervalType()
+    public function getIntervalType()
     {
-        return $this->twispayIntervalType;
+        return $this->intervalType;
     }
 
     /**
-     * Method setTwispayIntervalType
+     * Method setIntervalType
      *
-     * @param string $twispayIntervalType
+     * @param string $intervalType
      *
      * @return $this
      */
-    public function setTwispayIntervalType($twispayIntervalType)
+    public function setIntervalType($intervalType)
     {
-        $this->twispayIntervalType = $twispayIntervalType;
+        $this->intervalType = $intervalType;
         return $this;
     }
 
@@ -121,28 +124,28 @@ class TwispayOrderRecurring extends TwispayOrderAbstract
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         parent::validate();
 
-        if (strlen($this->twispayIntervalType) == 0) {
-            throw new TwispayException('*twispayIntervalType* is a required field', TwispayErrorCode::INTERVAL_TYPE_MISSING);
+        if (strlen($this->intervalType) == 0) {
+            throw new ValidationException('*intervalType* is a required field', ErrorCode::INTERVAL_TYPE_MISSING);
         }
-        if (!TwispayIntervalType::isValid($this->twispayIntervalType)) {
-            throw new TwispayException('*twispayIntervalType* is invalid', TwispayErrorCode::INTERVAL_TYPE_INVALID);
+        if (!IntervalType::isValid($this->intervalType)) {
+            throw new ValidationException('*intervalType* is invalid', ErrorCode::INTERVAL_TYPE_INVALID);
         }
 
         if (strlen($this->intervalValue) == 0) {
-            throw new TwispayException('*intervalValue* is a required field', TwispayErrorCode::INTERVAL_VALUE_MISSING);
+            throw new ValidationException('*intervalValue* is a required field', ErrorCode::INTERVAL_VALUE_MISSING);
         }
         if (
             ((int)$this->intervalValue == 0)
             || ((int)$this->intervalValue > 365)
             || (preg_match('/^[0-9]{1,3}$/', $this->intervalValue) != 1)
         ) {
-            throw new TwispayException('*intervalValue* is invalid, must be between 1 and 365', TwispayErrorCode::INTERVAL_VALUE_INVALID);
+            throw new ValidationException('*intervalValue* is invalid, must be between 1 and 365', ErrorCode::INTERVAL_VALUE_INVALID);
         }
 
         if (
@@ -153,12 +156,12 @@ class TwispayOrderRecurring extends TwispayOrderAbstract
                 || (preg_match('/^[0-9]+(\.[0-9]{1,2})?$/', $this->trialAmount) != 1)
             )
         ) {
-            throw new TwispayException('*trialAmount* is invalid, must be greater than 0.01 and match /^[0-9]+(\.[0-9]{1,2})?$/', TwispayErrorCode::TRIAL_AMOUNT_INVALID);
+            throw new ValidationException('*trialAmount* is invalid, must be greater than 0.01 and match /^[0-9]+(\.[0-9]{1,2})?$/', ErrorCode::TRIAL_AMOUNT_INVALID);
         }
 
         if (strlen($this->trialAmount) != 0) {
             if (strlen($this->firstBillDate) == 0) {
-                throw new TwispayException('*firstBillDate* is a required field', TwispayErrorCode::FIRST_BILL_DATE_MISSING);
+                throw new ValidationException('*firstBillDate* is a required field', ErrorCode::FIRST_BILL_DATE_MISSING);
             }
         }
         $firstBillDate = \DateTime::createFromFormat(\DateTime::ATOM, $this->firstBillDate);
@@ -169,7 +172,7 @@ class TwispayOrderRecurring extends TwispayOrderAbstract
                 || ($firstBillDate->format(\DateTime::ATOM) != $this->firstBillDate)
             )
         ) {
-            throw new TwispayException('*firstBillDate* is invalid, must be in ISO-8601 UTC format', TwispayErrorCode::FIRST_BILL_DATE_INVALID);
+            throw new ValidationException('*firstBillDate* is invalid, must be in ISO-8601 UTC format', ErrorCode::FIRST_BILL_DATE_INVALID);
         }
     }
 }

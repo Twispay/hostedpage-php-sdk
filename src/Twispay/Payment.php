@@ -2,26 +2,32 @@
 
 namespace Twispay;
 
+use Twispay\Entity\CardTransactionMode;
+use Twispay\Entity\Customer\Customer;
+use Twispay\Entity\ErrorCode;
+use Twispay\Entity\Order\OrderInterface;
+use Twispay\Exception\ValidationException;
+
 /**
- * Class TwispayPayment
+ * Class Payment
  *
  * @package Twispay
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayPayment
+class Payment
 {
     /** @var int $siteId Provided by twispay */
     protected $siteId;
 
-    /** @var TwispayCustomer $twispayCustomer */
-    protected $twispayCustomer;
+    /** @var Customer $customer */
+    protected $customer;
 
-    /** @var TwispayOrderInterface $twispayOrder */
-    protected $twispayOrder;
+    /** @var OrderInterface $order */
+    protected $order;
 
-    /** @var string|null $twispayCardTransactionMode */
-    protected $twispayCardTransactionMode;
+    /** @var string|null $cardTransactionMode */
+    protected $cardTransactionMode;
 
     /** @var int|null $cardId The ID of a previously used card for this customer */
     protected $cardId;
@@ -36,18 +42,18 @@ class TwispayPayment
      * TwispayPayment constructor.
      *
      * @param string $siteId
-     * @param TwispayCustomer $twispayCustomer
-     * @param TwispayOrderInterface $twispayOrder
+     * @param Customer $customer
+     * @param OrderInterface $order
      */
     public function __construct(
         $siteId,
-        TwispayCustomer $twispayCustomer,
-        TwispayOrderInterface $twispayOrder
+        Customer $customer,
+        OrderInterface $order
     )
     {
         $this->setSiteId($siteId)
-            ->setTwispayCustomer($twispayCustomer)
-            ->setTwispayOrder($twispayOrder)
+            ->setCustomer($customer)
+            ->setOrder($order)
             ->setCustomData([]);
     }
 
@@ -75,71 +81,71 @@ class TwispayPayment
     }
 
     /**
-     * Method getTwispayCustomer
+     * Method getCustomer
      *
-     * @return TwispayCustomer
+     * @return Customer
      */
-    public function getTwispayCustomer()
+    public function getCustomer()
     {
-        return $this->twispayCustomer;
+        return $this->customer;
     }
 
     /**
-     * Method setTwispayCustomer
+     * Method setCustomer
      *
-     * @param TwispayCustomer $twispayCustomer
+     * @param Customer $customer
      *
      * @return $this
      */
-    public function setTwispayCustomer(TwispayCustomer $twispayCustomer)
+    public function setCustomer(Customer $customer)
     {
-        $this->twispayCustomer = $twispayCustomer;
+        $this->customer = $customer;
         return $this;
     }
 
     /**
-     * Method getTwispayOrder
+     * Method getOrder
      *
-     * @return TwispayOrderInterface
+     * @return OrderInterface
      */
-    public function getTwispayOrder()
+    public function getOrder()
     {
-        return $this->twispayOrder;
+        return $this->order;
     }
 
     /**
-     * Method setTwispayOrder
+     * Method setOrder
      *
-     * @param TwispayOrderInterface $twispayOrder
+     * @param OrderInterface $order
      *
      * @return $this
      */
-    public function setTwispayOrder(TwispayOrderInterface $twispayOrder)
+    public function setOrder(OrderInterface $order)
     {
-        $this->twispayOrder = $twispayOrder;
+        $this->order = $order;
         return $this;
     }
 
     /**
-     * Method getTwispayCardTransactionMode
+     * Method getCardTransactionMode
      *
      * @return string
      */
-    public function getTwispayCardTransactionMode()
+    public function getCardTransactionMode()
     {
-        return $this->twispayCardTransactionMode;
+        return $this->cardTransactionMode;
     }
 
     /**
-     * Method setTwispayCardTransactionMode
+     * Method setCardTransactionMode
      *
-     * @param string $twispayCardTransactionMode
+     * @param string $cardTransactionMode
      *
      * @return $this
      */
-    public function setTwispayCardTransactionMode($twispayCardTransactionMode)
+    public function setCardTransactionMode($cardTransactionMode)
     {
-        $this->twispayCardTransactionMode = $twispayCardTransactionMode;
+        $this->cardTransactionMode = $cardTransactionMode;
         return $this;
     }
 
@@ -243,13 +249,13 @@ class TwispayPayment
         return array_merge(
             [
                 'siteId' => $this->siteId,
-                'cardTransactionMode' => $this->twispayCardTransactionMode,
+                'cardTransactionMode' => $this->cardTransactionMode,
                 'cardId' => $this->cardId,
                 'invoiceEmail' => $this->invoiceEmail,
                 'custom' => $this->customData,
             ],
-            $this->twispayCustomer->toArray(),
-            $this->twispayOrder->toArray()
+            $this->customer->toArray(),
+            $this->order->toArray()
         );
     }
 
@@ -286,29 +292,29 @@ class TwispayPayment
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         if (strlen($this->siteId) == 0) {
-            throw new TwispayException('*siteId* is a required field', TwispayErrorCode::SITE_ID_MISSING);
+            throw new ValidationException('*siteId* is a required field', ErrorCode::SITE_ID_MISSING);
         }
         if (
             ((int)$this->siteId == 0)
             || (preg_match('/^[0-9]{1,11}$/', $this->siteId) != 1)
         ) {
-            throw new TwispayException('*siteId* is invalid, not a positive integer number', TwispayErrorCode::SITE_ID_INVALID);
+            throw new ValidationException('*siteId* is invalid, not a positive integer number', ErrorCode::SITE_ID_INVALID);
         }
 
-        $this->twispayCustomer->validate();
+        $this->customer->validate();
 
-        $this->twispayOrder->validate();
+        $this->order->validate();
 
         if (
-            (strlen($this->twispayCardTransactionMode) != 0)
-            && !TwispayCardTransactionMode::isValid($this->twispayCardTransactionMode)
+            (strlen($this->cardTransactionMode) != 0)
+            && !CardTransactionMode::isValid($this->cardTransactionMode)
         ) {
-            throw new TwispayException('*twispayCardTransactionMode* is invalid', TwispayErrorCode::TRANSACTION_MODE_INVALID);
+            throw new ValidationException('*cardTransactionMode* is invalid', ErrorCode::TRANSACTION_MODE_INVALID);
         }
 
         if (
@@ -318,46 +324,46 @@ class TwispayPayment
                 || (preg_match('/^[0-9]{1,11}$/', $this->cardId) != 1)
             )
         ) {
-            throw new TwispayException('*cardId* is invalid, not a positive integer number', TwispayErrorCode::CARD_ID_INVALID);
+            throw new ValidationException('*cardId* is invalid, not a positive integer number', ErrorCode::CARD_ID_INVALID);
         }
 
         if (
             (strlen($this->invoiceEmail) != 0)
             && !filter_var($this->invoiceEmail, FILTER_VALIDATE_EMAIL)
         ) {
-            throw new TwispayException('*invoiceEmail* is invalid', TwispayErrorCode::EMAIL_INVALID);
+            throw new ValidationException('*invoiceEmail* is invalid', ErrorCode::EMAIL_INVALID);
         }
 
         if (!empty($this->customData)) {
             if (count($this->customData) > 512) {
-                throw new TwispayException('*customData* is invalid, can have maximum 512 elements', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                throw new ValidationException('*customData* is invalid, can have maximum 512 elements', ErrorCode::CUSTOM_DATA_INVALID);
             }
             foreach ($this->customData as $key => $value) {
                 if (mb_strlen($key, 'UTF-8') > 255) {
-                    throw new TwispayException('*customData* is invalid, a key can have maximum 255 characters', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                    throw new ValidationException('*customData* is invalid, a key can have maximum 255 characters', ErrorCode::CUSTOM_DATA_INVALID);
                 }
                 if (is_scalar($value)) {
                     if (mb_strlen($value, 'UTF-8') > 65535) {
-                        throw new TwispayException('*customData* is invalid, a value can have maximum 65535 characters', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                        throw new ValidationException('*customData* is invalid, a value can have maximum 65535 characters', ErrorCode::CUSTOM_DATA_INVALID);
                     }
                 } elseif (is_array($value)) {
                     if (count($value) > 512) {
-                        throw new TwispayException('*customData* is invalid, a value can have maximum 512 sub-elements', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                        throw new ValidationException('*customData* is invalid, a value can have maximum 512 sub-elements', ErrorCode::CUSTOM_DATA_INVALID);
                     }
                     foreach ($value as $subKey => $subValue) {
                         if (mb_strlen($subKey, 'UTF-8') > 255) {
-                            throw new TwispayException('*customData* is invalid, a sub-key can have maximum 255 characters', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                            throw new ValidationException('*customData* is invalid, a sub-key can have maximum 255 characters', ErrorCode::CUSTOM_DATA_INVALID);
                         }
                         if (is_scalar($subValue)) {
                             if (mb_strlen($subValue, 'UTF-8') > 65535) {
-                                throw new TwispayException('*customData* is invalid, a sub-value can have maximum 65535 characters', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                                throw new ValidationException('*customData* is invalid, a sub-value can have maximum 65535 characters', ErrorCode::CUSTOM_DATA_INVALID);
                             }
                         } else {
-                            throw new TwispayException('*customData* is invalid, a sub-value must be scalar', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                            throw new ValidationException('*customData* is invalid, a sub-value must be scalar', ErrorCode::CUSTOM_DATA_INVALID);
                         }
                     }
                 } else {
-                    throw new TwispayException('*customData* is invalid, a value must be scalar or array', TwispayErrorCode::CUSTOM_DATA_INVALID);
+                    throw new ValidationException('*customData* is invalid, a value must be scalar or array', ErrorCode::CUSTOM_DATA_INVALID);
                 }
             }
         }

@@ -1,15 +1,15 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
 
 /**
- * Class TwispayLevel3Abstract
+ * Class Level3Abstract
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-abstract class TwispayLevel3Abstract implements TwispayLevel3interface
+abstract class Level3Abstract implements Level3interface
 {
     /** @var string $level3Type */
     protected $level3Type;

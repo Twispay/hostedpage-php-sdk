@@ -1,15 +1,15 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
 
 /**
- * Class TwispayCurrency
+ * Class Currency
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayCurrency
+class Currency
 {
     const USD = 'USD';
     const EUR = 'EUR';

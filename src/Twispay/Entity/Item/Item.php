@@ -1,15 +1,18 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Item;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayItem
+ * Class Item
  *
- * @package Twispay
+ * @package Twispay\Entity\Item
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayItem
+class Item
 {
     /** @var string $item Item name */
     protected $item;
@@ -124,32 +127,32 @@ class TwispayItem
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         if (strlen($this->item) == 0) {
-            throw new TwispayException('*item* is a required field', TwispayErrorCode::ITEM_MISSING);
+            throw new ValidationException('*item* is a required field', ErrorCode::ITEM_MISSING);
         }
         if (mb_strlen($this->item, 'UTF-8') > 512) {
-            throw new TwispayException('*item* is invalid, can have maximum 512 characters', TwispayErrorCode::ITEM_INVALID);
+            throw new ValidationException('*item* is invalid, can have maximum 512 characters', ErrorCode::ITEM_INVALID);
         }
 
         if (strlen($this->unitPrice) == 0) {
-            throw new TwispayException('*unitPrice* is a required field', TwispayErrorCode::ITEM_UNIT_PRICE_MISSING);
+            throw new ValidationException('*unitPrice* is a required field', ErrorCode::ITEM_UNIT_PRICE_MISSING);
         }
         if (preg_match('/^-?[0-9]+(.[0-9]+)?$/', $this->unitPrice) != 1) {
-            throw new TwispayException('*unitPrice* is invalid, does not match /^-?[0-9]{1,}(.[0-9]+)?$/', TwispayErrorCode::ITEM_UNIT_PRICE_INVALID);
+            throw new ValidationException('*unitPrice* is invalid, does not match /^-?[0-9]{1,}(.[0-9]+)?$/', ErrorCode::ITEM_UNIT_PRICE_INVALID);
         }
 
         if (strlen($this->units) == 0) {
-            throw new TwispayException('*units* is a required field', TwispayErrorCode::ITEM_UNITS_MISSING);
+            throw new ValidationException('*units* is a required field', ErrorCode::ITEM_UNITS_MISSING);
         }
         if (
             ((int)$this->units == 0)
             || (preg_match('/^[0-9]+$/', $this->units) != 1)
         ) {
-            throw new TwispayException('*units* is invalid, not a positive integer number', TwispayErrorCode::ITEM_UNITS_INVALID);
+            throw new ValidationException('*units* is invalid, not a positive integer number', ErrorCode::ITEM_UNITS_INVALID);
         }
     }
 }

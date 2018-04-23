@@ -1,15 +1,18 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
+
+use Twispay\Entity\ErrorCode;
+use Twispay\Exception\ValidationException;
 
 /**
  * Class TwispayLevel3Airline
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayLevel3Airline extends TwispayLevel3Abstract implements TwispayLevel3Interface
+class Level3Airline extends Level3Abstract implements Level3interface
 {
     protected $level3Type = 'airline';
 
@@ -309,75 +312,75 @@ class TwispayLevel3Airline extends TwispayLevel3Abstract implements TwispayLevel
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate()
     {
         if (strlen($this->ticketNumber) == 0) {
-            throw new TwispayException('*ticketNumber* is a required field', TwispayErrorCode::AIRLINE_TICKET_NUMBER_MISSING);
+            throw new ValidationException('*ticketNumber* is a required field', ErrorCode::AIRLINE_TICKET_NUMBER_MISSING);
         }
         if (mb_strlen($this->ticketNumber) > 64) {
-            throw new TwispayException('*ticketNumber* is invalid, can have maximum 64 characters', TwispayErrorCode::AIRLINE_TICKET_NUMBER_INVALID);
+            throw new ValidationException('*ticketNumber* is invalid, can have maximum 64 characters', ErrorCode::AIRLINE_TICKET_NUMBER_INVALID);
         }
 
         if (strlen($this->passengerName) == 0) {
-            throw new TwispayException('*passengerName* is a required field', TwispayErrorCode::AIRLINE_PASSENGER_NAME_MISSING);
+            throw new ValidationException('*passengerName* is a required field', ErrorCode::AIRLINE_PASSENGER_NAME_MISSING);
         }
         if (mb_strlen($this->passengerName) > 512) {
-            throw new TwispayException('*passengerName* is invalid, can have maximum 512 characters', TwispayErrorCode::AIRLINE_PASSENGER_NAME_INVALID);
+            throw new ValidationException('*passengerName* is invalid, can have maximum 512 characters', ErrorCode::AIRLINE_PASSENGER_NAME_INVALID);
         }
 
         if (strlen($this->flightNumber) == 0) {
-            throw new TwispayException('*flightNumber* is a required field', TwispayErrorCode::AIRLINE_FLIGHT_NUMBER_MISSING);
+            throw new ValidationException('*flightNumber* is a required field', ErrorCode::AIRLINE_FLIGHT_NUMBER_MISSING);
         }
         if (mb_strlen($this->flightNumber) > 64) {
-            throw new TwispayException('*flightNumber* is invalid, can have maximum 64 characters', TwispayErrorCode::AIRLINE_FLIGHT_NUMBER_INVALID);
+            throw new ValidationException('*flightNumber* is invalid, can have maximum 64 characters', ErrorCode::AIRLINE_FLIGHT_NUMBER_INVALID);
         }
 
         if (strlen($this->departureDate) == 0) {
-            throw new TwispayException('*departureDate* is a required field', TwispayErrorCode::AIRLINE_DEPARTURE_DATE_MISSING);
+            throw new ValidationException('*departureDate* is a required field', ErrorCode::AIRLINE_DEPARTURE_DATE_MISSING);
         }
         $departureDate = \DateTime::createFromFormat(\DateTime::ATOM, $this->departureDate);
         if (
             !$departureDate
             || ($departureDate->format(\DateTime::ATOM) != $this->departureDate)
         ) {
-            throw new TwispayException('*departureDate* is invalid, must be in ISO-8601 UTC format', TwispayErrorCode::AIRLINE_DEPARTURE_DATE_INVALID);
+            throw new ValidationException('*departureDate* is invalid, must be in ISO-8601 UTC format', ErrorCode::AIRLINE_DEPARTURE_DATE_INVALID);
         }
 
         if (strlen($this->departureAirportCode) == 0) {
-            throw new TwispayException('*departureAirportCode* is a required field', TwispayErrorCode::AIRLINE_DEPARTURE_AIRPORT_CODE_MISSING);
+            throw new ValidationException('*departureAirportCode* is a required field', ErrorCode::AIRLINE_DEPARTURE_AIRPORT_CODE_MISSING);
         }
         if (mb_strlen($this->departureAirportCode) > 3) {
-            throw new TwispayException('*departureAirportCode* is invalid, can have maximum 3 characters', TwispayErrorCode::AIRLINE_DEPARTURE_AIRPORT_CODE_INVALID);
+            throw new ValidationException('*departureAirportCode* is invalid, can have maximum 3 characters', ErrorCode::AIRLINE_DEPARTURE_AIRPORT_CODE_INVALID);
         }
 
         if (strlen($this->arrivalAirportCode) == 0) {
-            throw new TwispayException('*arrivalAirportCode* is a required field', TwispayErrorCode::AIRLINE_ARRIVAL_AIRPORT_CODE_MISSING);
+            throw new ValidationException('*arrivalAirportCode* is a required field', ErrorCode::AIRLINE_ARRIVAL_AIRPORT_CODE_MISSING);
         }
         if (mb_strlen($this->arrivalAirportCode) > 3) {
-            throw new TwispayException('*arrivalAirportCode* is invalid, can have maximum 3 characters', TwispayErrorCode::AIRLINE_ARRIVAL_AIRPORT_CODE_INVALID);
+            throw new ValidationException('*arrivalAirportCode* is invalid, can have maximum 3 characters', ErrorCode::AIRLINE_ARRIVAL_AIRPORT_CODE_INVALID);
         }
 
         if (strlen($this->carrierCode) == 0) {
-            throw new TwispayException('*carrierCode* is a required field', TwispayErrorCode::AIRLINE_CARRIER_CODE_MISSING);
+            throw new ValidationException('*carrierCode* is a required field', ErrorCode::AIRLINE_CARRIER_CODE_MISSING);
         }
         if (mb_strlen($this->carrierCode) > 32) {
-            throw new TwispayException('*carrierCode* is invalid, can have maximum 32 characters', TwispayErrorCode::AIRLINE_CARRIER_CODE_INVALID);
+            throw new ValidationException('*carrierCode* is invalid, can have maximum 32 characters', ErrorCode::AIRLINE_CARRIER_CODE_INVALID);
         }
 
         if (strlen($this->travelAgencyCode) == 0) {
-            throw new TwispayException('*travelAgencyCode* is a required field', TwispayErrorCode::AIRLINE_TRAVEL_AGENCY_CODE_MISSING);
+            throw new ValidationException('*travelAgencyCode* is a required field', ErrorCode::AIRLINE_TRAVEL_AGENCY_CODE_MISSING);
         }
         if (mb_strlen($this->travelAgencyCode) > 32) {
-            throw new TwispayException('*travelAgencyCode* is invalid, can have maximum 32 characters', TwispayErrorCode::AIRLINE_TRAVEL_AGENCY_CODE_INVALID);
+            throw new ValidationException('*travelAgencyCode* is invalid, can have maximum 32 characters', ErrorCode::AIRLINE_TRAVEL_AGENCY_CODE_INVALID);
         }
 
         if (strlen($this->travelAgencyName) == 0) {
-            throw new TwispayException('*travelAgencyName* is a required field', TwispayErrorCode::AIRLINE_TRAVEL_AGENCY_NAME_MISSING);
+            throw new ValidationException('*travelAgencyName* is a required field', ErrorCode::AIRLINE_TRAVEL_AGENCY_NAME_MISSING);
         }
         if (mb_strlen($this->travelAgencyName) > 512) {
-            throw new TwispayException('*travelAgencyName* is invalid, can have maximum 32 characters', TwispayErrorCode::AIRLINE_TRAVEL_AGENCY_NAME_INVALID);
+            throw new ValidationException('*travelAgencyName* is invalid, can have maximum 32 characters', ErrorCode::AIRLINE_TRAVEL_AGENCY_NAME_INVALID);
         }
     }
 }

@@ -1,24 +1,26 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Item;
+
+use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayItems
+ * Class Items
  *
- * @package Twispay
+ * @package Twispay\Entity\Item
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayItems implements \ArrayAccess, \Iterator, \Countable
+class Items implements \ArrayAccess, \Iterator, \Countable
 {
-    /** @var TwispayItem[] $list */
+    /** @var Item[] $list */
     protected $list = [];
 
     /**
      * Method offsetSet
      *
      * @param int $offset
-     * @param TwispayItem $value
+     * @param Item $value
      */
     public function offsetSet($offset, $value)
     {
@@ -56,7 +58,7 @@ class TwispayItems implements \ArrayAccess, \Iterator, \Countable
      *
      * @param int $offset
      *
-     * @return TwispayItem|null
+     * @return Item|null
      */
     public function offsetGet($offset)
     {
@@ -74,7 +76,7 @@ class TwispayItems implements \ArrayAccess, \Iterator, \Countable
     /**
      * Method current
      *
-     * @return TwispayItem
+     * @return Item
      */
     public function current()
     {
@@ -157,7 +159,7 @@ class TwispayItems implements \ArrayAccess, \Iterator, \Countable
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate() {
         foreach ($this->list as $twispayItem) {

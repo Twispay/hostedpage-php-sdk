@@ -1,15 +1,15 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
 
 /**
- * Class TwispayIntervalType
+ * Class IntervalType
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class TwispayIntervalType
+class IntervalType
 {
     const DAY = 'day';
     const MONTH = 'month';

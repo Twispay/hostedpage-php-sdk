@@ -1,22 +1,24 @@
 <?php
 
-namespace Twispay;
+namespace Twispay\Entity\Order;
+
+use Twispay\Exception\ValidationException;
 
 /**
- * Interface TwispayLevel3interface
+ * Interface TwispayOrderInterface
  *
- * @package Twispay
+ * @package Twispay\Entity\Order
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-interface TwispayLevel3interface
+interface OrderInterface
 {
     /**
-     * Method getLevel3Type
+     * Method getOrderType
      *
      * @return string
      */
-    public function getLevel3Type();
+    public function getOrderType();
 
     /**
      * Method toArray
@@ -28,7 +30,7 @@ interface TwispayLevel3interface
     /**
      * Method validate
      *
-     * @throws TwispayException
+     * @throws ValidationException
      */
     public function validate();
 }

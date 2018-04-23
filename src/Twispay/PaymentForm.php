@@ -20,8 +20,8 @@ class PaymentForm
     /** @var string $popupCssUrl The URL of the CSS for a Pop-Up payment page */
     static $popupCssUrl = 'https://secure.twispay.com/js/sdk/v1/TwisPay.css';
 
-    /** @var Payment $twispayPayment */
-    protected $twispayPayment;
+    /** @var Payment $payment */
+    protected $payment;
 
     /** @var bool $isPopup */
     protected $isPopup;
@@ -29,38 +29,38 @@ class PaymentForm
     /**
      * TwispayPaymentForm constructor.
      *
-     * @param Payment $twispayPayment
+     * @param Payment $payment
      * @param bool $isPopup
      */
     public function __construct(
-        Payment $twispayPayment,
+        Payment $payment,
         $isPopup = false
     )
     {
-        $this->setTwispayPayment($twispayPayment)
+        $this->setPayment($payment)
             ->setIsPopup($isPopup);
     }
 
     /**
-     * Method TwispayPayment
+     * Method getPayment
      *
      * @return Payment
      */
-    public function getTwispayPayment()
+    public function getPayment()
     {
-        return $this->twispayPayment;
+        return $this->payment;
     }
 
     /**
-     * Method setTwispayPayment
+     * Method setPayment
      *
-     * @param Payment $twispayPayment
+     * @param Payment $payment
      *
      * @return $this
      */
-    public function setTwispayPayment(Payment $twispayPayment)
+    public function setPayment(Payment $payment)
     {
-        $this->twispayPayment = $twispayPayment;
+        $this->payment = $payment;
         return $this;
     }
 
@@ -133,7 +133,7 @@ class PaymentForm
             $form .= '<link rel="stylesheet" type="text/css" href="' . self::$popupCssUrl . '">';
         }
         $form .= '<form ' . $this->getHtmlFormAttributes($formAttributes) . '>' . "\n";
-        $formData = $this->twispayPayment->toArray();
+        $formData = $this->payment->toArray();
         foreach ($formData as $field => $value) {
             if (is_array($value)) {
                 foreach ($value as $key => $entry) {
@@ -149,7 +149,7 @@ class PaymentForm
             }
             $form .= '<input type="hidden" name="' . $field . '" value="' . htmlspecialchars($value) . '">' . "\n";
         }
-        $checksum = $this->twispayPayment->getChecksum($secretKey);
+        $checksum = $this->payment->getChecksum($secretKey);
         $form .= '<input type="hidden" name="checksum" value="' . $checksum . '">' . "\n";
         if (empty($submitButton)) {
             $submitButton = '<input type="submit" class="twispaySubmit" value="Purchase">';

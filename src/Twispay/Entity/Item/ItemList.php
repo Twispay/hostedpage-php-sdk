@@ -5,13 +5,13 @@ namespace Twispay\Entity\Item;
 use Twispay\Exception\ValidationException;
 
 /**
- * Class Items
+ * Class ItemList
  *
  * @package Twispay\Entity\Item
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class Items implements \ArrayAccess, \Iterator, \Countable
+class ItemList implements \ArrayAccess, \Iterator, \Countable
 {
     /** @var Item[] $list */
     protected $list = [];
@@ -130,8 +130,8 @@ class Items implements \ArrayAccess, \Iterator, \Countable
     public function toArray()
     {
         $list = [];
-        foreach ($this->list as $twispayItem) {
-            $data = $twispayItem->toArray();
+        foreach ($this->list as $item) {
+            $data = $item->toArray();
             foreach ($data as $key => $value) {
                 if (!isset($list[$key])) {
                     $list[$key] = [];
@@ -150,8 +150,8 @@ class Items implements \ArrayAccess, \Iterator, \Countable
     public function getAmount()
     {
         $amount = 0.0;
-        foreach ($this->list as $twispayItem) {
-            $amount += (float)$twispayItem->getUnitPrice() * (float)$twispayItem->getUnits();
+        foreach ($this->list as $item) {
+            $amount += (float)$item->getUnitPrice() * (float)$item->getUnits();
         }
         return $amount;
     }
@@ -162,8 +162,8 @@ class Items implements \ArrayAccess, \Iterator, \Countable
      * @throws ValidationException
      */
     public function validate() {
-        foreach ($this->list as $twispayItem) {
-            $twispayItem->validate();
+        foreach ($this->list as $item) {
+            $item->validate();
         }
     }
 }

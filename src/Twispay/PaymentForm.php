@@ -11,32 +11,31 @@ namespace Twispay;
  */
 class PaymentForm
 {
-    /** @var string $paymentUrl The URL of the payment page */
-    static $paymentUrl = 'https://secure.twispay.com';
-
-    /** @var string $popupJsUrl The URL of the JavaScript for a Pop-Up payment page */
-    static $popupJsUrl = 'https://secure.twispay.com/js/sdk/v1/TwisPay.js';
-
-    /** @var string $popupCssUrl The URL of the CSS for a Pop-Up payment page */
-    static $popupCssUrl = 'https://secure.twispay.com/js/sdk/v1/TwisPay.css';
-
-    /** @var Payment $payment */
+    /** @var PaymentInterface $payment */
     protected $payment;
 
     /** @var bool $isPopup */
     protected $isPopup;
 
+    /** @var array $config */
+    protected $config;
+
     /**
-     * TwispayPaymentForm constructor.
+     * PaymentForm constructor.
      *
-     * @param Payment $payment
+     * @param PaymentInterface $payment
      * @param bool $isPopup
+     * @param array $config
      */
     public function __construct(
-        Payment $payment,
-        $isPopup = false
+        PaymentInterface $payment,
+        $isPopup = false,
+        array $config = []
     )
     {
+        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+        $liveConfig = $twispayConfig['live'];
+        $this->config = array_merge($liveConfig, $config);
         $this->setPayment($payment)
             ->setIsPopup($isPopup);
     }
@@ -44,7 +43,7 @@ class PaymentForm
     /**
      * Method getPayment
      *
-     * @return Payment
+     * @return PaymentInterface
      */
     public function getPayment()
     {
@@ -54,11 +53,11 @@ class PaymentForm
     /**
      * Method setPayment
      *
-     * @param Payment $payment
+     * @param PaymentInterface $payment
      *
      * @return $this
      */
-    public function setPayment(Payment $payment)
+    public function setPayment(PaymentInterface $payment)
     {
         $this->payment = $payment;
         return $this;
@@ -97,7 +96,7 @@ class PaymentForm
     protected function getHtmlFormAttributes(array $formAttributes)
     {
         $attributes = [
-            'action="' . self::$paymentUrl . '"',
+            'action="' . $this->config['paymentUrl'] . '"',
             'method="post"',
             'enctype="application/x-www-form-urlencoded"',
             'accept-charset="UTF-8"',
@@ -130,7 +129,7 @@ class PaymentForm
     {
         $form = '';
         if ($this->isPopup) {
-            $form .= '<link rel="stylesheet" type="text/css" href="' . self::$popupCssUrl . '">';
+            $form .= '<link rel="stylesheet" type="text/css" href="' . $this->config['popupCssUrl'] . '">';
         }
         $form .= '<form ' . $this->getHtmlFormAttributes($formAttributes) . '>' . "\n";
         $formData = $this->payment->toArray();
@@ -149,14 +148,14 @@ class PaymentForm
             }
             $form .= '<input type="hidden" name="' . $field . '" value="' . htmlspecialchars($value) . '">' . "\n";
         }
-        $checksum = $this->payment->getChecksum($secretKey);
+        $checksum = $this->payment->getChecksum($secretKey, $formData);
         $form .= '<input type="hidden" name="checksum" value="' . $checksum . '">' . "\n";
         if (empty($submitButton)) {
             $submitButton = '<input type="submit" class="twispaySubmit" value="Purchase">';
         }
         $form .= $submitButton . "\n";
         if ($this->isPopup) {
-            $form .= '<script type="text/javascript" src="' . self::$popupJsUrl . '"></script>';
+            $form .= '<script type="text/javascript" src="' . $this->config['popupJsUrl'] . '"></script>';
         }
         $form .= '</form>';
         return $form;

@@ -6,7 +6,7 @@ use Twispay\Entity\ErrorCode;
 use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayOrderRecurring
+ * Class OrderRecurring
  *
  * @package Twispay\Entity\Order
  * @author Dragos URSU
@@ -28,6 +28,28 @@ class OrderRecurring extends OrderAbstract
 
     /** @var string $firstBillDate Datetime ISO-8601 yyyy-mm-ddThh:mm:ss+00:00 UTC always */
     protected $firstBillDate;
+
+    /**
+     * OrderRecurring constructor.
+     *
+     * @param string $orderId
+     * @param float $amount
+     * @param string $currency
+     * @param string $intervalType
+     * @param int $intervalValue
+     */
+    public function __construct(
+        $orderId,
+        $amount,
+        $currency,
+        $intervalType,
+        $intervalValue
+    )
+    {
+        parent::__construct($orderId, $amount, $currency);
+        $this->setIntervalType($intervalType)
+            ->setIntervalValue($intervalValue);
+    }
 
     /**
      * Method getIntervalType
@@ -119,6 +141,24 @@ class OrderRecurring extends OrderAbstract
     {
         $this->firstBillDate = $firstBillDate;
         return $this;
+    }
+
+    /**
+     * Method toArray
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return array_merge(
+            parent::toArray(),
+            [
+                'intervalType' => $this->intervalType,
+                'intervalValue' => $this->intervalValue,
+                'trialAmount' => $this->trialAmount,
+                'firstBillDate' => $this->firstBillDate,
+            ]
+        );
     }
 
     /**

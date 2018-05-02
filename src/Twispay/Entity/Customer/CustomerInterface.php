@@ -1,25 +1,18 @@
 <?php
 
-namespace Twispay\Entity\Order;
+namespace Twispay\Entity\Customer;
 
 use Twispay\Exception\ValidationException;
 
 /**
- * Interface OrderInterface
+ * Interface CustomerInterface
  *
- * @package Twispay\Entity\Order
+ * @package Twispay\Entity\Customer
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-interface OrderInterface
+interface CustomerInterface
 {
-    /**
-     * Method getOrderType
-     *
-     * @return string
-     */
-    public function getOrderType();
-
     /**
      * Method toArray
      *

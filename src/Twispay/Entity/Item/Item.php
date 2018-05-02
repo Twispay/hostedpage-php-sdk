@@ -24,7 +24,7 @@ class Item
     protected $units;
 
     /**
-     * TwispayItem constructor.
+     * Item constructor.
      *
      * @param string $item
      * @param float $unitPrice
@@ -118,9 +118,9 @@ class Item
     public function toArray()
     {
         return [
-            'item' => $this->getItem(),
-            'unitPrice' => $this->getUnitPrice(),
-            'units' => $this->getUnits(),
+            'item' => $this->item,
+            'unitPrice' => $this->unitPrice,
+            'units' => $this->units,
         ];
     }
 

@@ -4,7 +4,7 @@ namespace Twispay\Entity\Order;
 
 use Twispay\Entity\ErrorCode;
 use Twispay\Entity\Item\Item;
-use Twispay\Entity\Item\Items;
+use Twispay\Entity\Item\ItemList;
 use Twispay\Exception\ValidationException;
 
 /**
@@ -28,11 +28,11 @@ abstract class OrderAbstract implements OrderInterface
     /** @var string $currency Use ISO 4217 three letter code @see Currency */
     protected $currency;
 
-    /** @var string|null $description Required when no $twispayItems defined with max 77056 chars */
+    /** @var string|null $description Required when no $items defined with max 77056 chars */
     protected $description;
 
-    /** @var Items $items */
-    protected $items;
+    /** @var ItemList $itemList */
+    protected $itemList;
 
     /** @var string[] $orderTags Unique order tags */
     protected $orderTags;
@@ -56,7 +56,7 @@ abstract class OrderAbstract implements OrderInterface
         $this->setOrderId($orderId)
             ->setAmount($amount)
             ->setCurrency($currency)
-            ->setItems(new Items())
+            ->setItemList(new ItemList())
             ->setOrderTags([]);
     }
 
@@ -152,7 +152,7 @@ abstract class OrderAbstract implements OrderInterface
     /**
      * Method setDescription
      *
-     * @param string|null $description Required when no $twispayItems defined with max 77056 chars
+     * @param string|null $description Required when no $items defined with max 77056 chars
      *
      * @return $this
      */
@@ -163,25 +163,25 @@ abstract class OrderAbstract implements OrderInterface
     }
 
     /**
-     * Method getItems
+     * Method getItemList
      *
-     * @return Items
+     * @return ItemList
      */
-    public function getItems()
+    public function getItemList()
     {
-        return $this->items;
+        return $this->itemList;
     }
 
     /**
-     * Method setItems
+     * Method setItemList
      *
-     * @param Items $items
+     * @param ItemList $itemList
      *
      * @return $this
      */
-    public function setItems(Items $items)
+    public function setItemList(ItemList $itemList)
     {
-        $this->items = $items;
+        $this->itemList = $itemList;
         return $this;
     }
 
@@ -194,7 +194,7 @@ abstract class OrderAbstract implements OrderInterface
      */
     public function addItem(Item $item)
     {
-        $this->items[] = $item;
+        $this->itemList[] = $item;
         return $this;
     }
 
@@ -274,7 +274,7 @@ abstract class OrderAbstract implements OrderInterface
                 'orderTags' => array_values($this->orderTags),
                 'backUrl' => $this->backUrl,
             ],
-            $this->items->toArray()
+            $this->itemList->toArray()
         );
     }
 
@@ -311,7 +311,7 @@ abstract class OrderAbstract implements OrderInterface
 
         if (
             (strlen($this->description) == 0)
-            && (count($this->items) == 0)
+            && (count($this->itemList) == 0)
         ) {
             throw new ValidationException('*description* is a required field when there are no *items*', ErrorCode::ORDER_DESCRIPTION_MISSING);
         }
@@ -322,7 +322,7 @@ abstract class OrderAbstract implements OrderInterface
             throw new ValidationException('*description* is invalid, malformed UTF-8 characters', ErrorCode::ORDER_DESCRIPTION_INVALID);
         }
 
-        $this->items->validate();
+        $this->itemList->validate();
 
         foreach ($this->orderTags as $orderTag) {
             if (preg_match('/^[0-9a-z\-_\.]{1,100}$/i', $orderTag) != 1) {

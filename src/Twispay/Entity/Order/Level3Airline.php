@@ -44,7 +44,7 @@ class Level3Airline extends Level3Abstract implements Level3interface
     protected $travelAgencyName;
 
     /**
-     * TwispayLevel3Airline constructor.
+     * Level3Airline constructor.
      *
      * @param string $ticketNumber
      * @param string $passengerName

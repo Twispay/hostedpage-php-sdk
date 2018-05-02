@@ -27,12 +27,12 @@ class ItemLevel3 extends Item
     protected $vatPercent;
 
     /**
-     * TwispayItem constructor.
+     * ItemLevel3 constructor.
      *
      * @param string $item
      * @param float $unitPrice
      * @param int $units
-     * @param string $twispayItemType
+     * @param string $itemType
      * @param string $code
      * @param string $description
      * @param float $vatPercent
@@ -41,7 +41,7 @@ class ItemLevel3 extends Item
         $item,
         $unitPrice,
         $units,
-        $twispayItemType,
+        $itemType,
         $code,
         $description,
         $vatPercent
@@ -52,7 +52,7 @@ class ItemLevel3 extends Item
             $unitPrice,
             $units
         );
-        $this->setItemType($twispayItemType)
+        $this->setItemType($itemType)
             ->setCode($code)
             ->setDescription($description)
             ->setVatPercent($vatPercent);
@@ -160,10 +160,10 @@ class ItemLevel3 extends Item
         return array_merge(
             parent::toArray(),
             [
-                'type' => $this->getItemType(),
-                'code' => $this->getCode(),
-                'vatPercent' => $this->getVatPercent(),
-                'itemDescription' => $this->getDescription(),
+                'type' => $this->itemType,
+                'code' => $this->code,
+                'vatPercent' => $this->vatPercent,
+                'itemDescription' => $this->description,
             ]
         );
     }
@@ -180,7 +180,7 @@ class ItemLevel3 extends Item
         if (strlen($this->itemType) == 0) {
             throw new ValidationException('*itemType* is a required field', ErrorCode::ITEM_TYPE_MISSING);
         }
-        if (ItemType::isValid($this->itemType)) {
+        if (!ItemType::isValid($this->itemType)) {
             throw new ValidationException('*itemType* is invalid', ErrorCode::ITEM_TYPE_INVALID);
         }
 

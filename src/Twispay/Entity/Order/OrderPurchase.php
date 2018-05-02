@@ -6,7 +6,7 @@ use Twispay\Entity\ErrorCode;
 use Twispay\Exception\ValidationException;
 
 /**
- * Class TwispayOrderPurchase
+ * Class OrderPurchase
  *
  * @package Twispay\Entity\Order
  * @author Dragos URSU
@@ -21,7 +21,7 @@ class OrderPurchase extends OrderAbstract
     protected $level3;
 
     /**
-     * TwispayOrderAbstract constructor.
+     * OrderPurchase constructor.
      *
      * @param string $orderId
      * @param float $amount
@@ -88,13 +88,13 @@ class OrderPurchase extends OrderAbstract
 
             $this->level3->validate();
 
-            if (count($this->items) == 0) {
-                throw new ValidationException('*twispayItems* must be set when using level3 data', ErrorCode::LEVEL3_DATA_INVALID);
+            if (count($this->itemList) == 0) {
+                throw new ValidationException('*items* must be set when using level3 data', ErrorCode::LEVEL3_DATA_INVALID);
             }
 
-            $calculatedAmount = $this->items->getAmount();
+            $calculatedAmount = $this->itemList->getAmount();
             if ($calculatedAmount != (float)$this->amount) {
-                throw new ValidationException('*twispayItems* items total does not match order amount ('. $calculatedAmount . '=/=' . $this->amount . ')', ErrorCode::LEVEL3_DATA_INVALID);
+                throw new ValidationException('*items* items total does not match order amount ('. $calculatedAmount . '=/=' . $this->amount . ')', ErrorCode::LEVEL3_DATA_INVALID);
             }
         }
     }

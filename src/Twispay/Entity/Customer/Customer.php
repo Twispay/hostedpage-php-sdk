@@ -12,7 +12,7 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class Customer
+class Customer implements CustomerInterface
 {
     /** @var string $identifier Customer ID assigned by merchant with max 92 chars */
     protected $identifier;
@@ -48,7 +48,7 @@ class Customer
     protected $customerTags;
 
     /**
-     * TwispayCustomer constructor.
+     * Customer constructor.
      *
      * @param string $identifier Customer ID assigned by merchant with max 92 chars
      */

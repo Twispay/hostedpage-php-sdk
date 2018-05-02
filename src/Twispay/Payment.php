@@ -3,7 +3,7 @@
 namespace Twispay;
 
 use Twispay\Entity\CardTransactionMode;
-use Twispay\Entity\Customer\Customer;
+use Twispay\Entity\Customer\CustomerInterface;
 use Twispay\Entity\ErrorCode;
 use Twispay\Entity\Order\OrderInterface;
 use Twispay\Exception\ValidationException;
@@ -15,12 +15,12 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class Payment
+class Payment implements PaymentInterface
 {
-    /** @var int $siteId Provided by twispay */
+    /** @var int $siteId Provided by Twispay */
     protected $siteId;
 
-    /** @var Customer $customer */
+    /** @var CustomerInterface $customer */
     protected $customer;
 
     /** @var OrderInterface $order */
@@ -39,15 +39,15 @@ class Payment
     protected $customData;
 
     /**
-     * TwispayPayment constructor.
+     * Payment constructor.
      *
      * @param string $siteId
-     * @param Customer $customer
+     * @param CustomerInterface $customer
      * @param OrderInterface $order
      */
     public function __construct(
         $siteId,
-        Customer $customer,
+        CustomerInterface $customer,
         OrderInterface $order
     )
     {
@@ -83,7 +83,7 @@ class Payment
     /**
      * Method getCustomer
      *
-     * @return Customer
+     * @return CustomerInterface
      */
     public function getCustomer()
     {
@@ -93,11 +93,11 @@ class Payment
     /**
      * Method setCustomer
      *
-     * @param Customer $customer
+     * @param CustomerInterface $customer
      *
      * @return $this
      */
-    public function setCustomer(Customer $customer)
+    public function setCustomer(CustomerInterface $customer)
     {
         $this->customer = $customer;
         return $this;
@@ -228,6 +228,7 @@ class Payment
      */
     public function addCustomData($key, $value)
     {
+        $key = (string)$key;
         if (array_key_exists($key, $this->customData)) {
             if (!is_array($this->customData[$key])) {
                 $this->customData[$key] = [$this->customData[$key]];
@@ -260,17 +261,19 @@ class Payment
     }
 
     /**
-     * Method recursiveKeySort
+     * Method recursiveSortAndPrepare
      *
      * @param array $data
      */
-    protected function recursiveKeySort(array &$data)
+    protected function recursiveSortAndPrepare(array &$data)
     {
         ksort($data, SORT_STRING);
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $this->recursiveKeySort($data[$key]);
+                $this->recursiveSortAndPrepare($data[$key]);
+                continue;
             }
+            $data[$key] = (string)$value;
         }
     }
 
@@ -278,13 +281,13 @@ class Payment
      * Method getChecksum
      *
      * @param string $secretKey
+     * @param array $data
      *
      * @return string
      */
-    public function getChecksum($secretKey)
+    public function getChecksum($secretKey, array $data)
     {
-        $data = $this->toArray();
-        $this->recursiveKeySort($data);
+        $this->recursiveSortAndPrepare($data);
         $rawData = http_build_query($data);
         return base64_encode(hash_hmac('sha512', $rawData, $secretKey, true));
     }

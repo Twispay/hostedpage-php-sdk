@@ -5,7 +5,7 @@
 The <b>Twispay hosted payment page SDK for PHP</b> make it easy for 
 developers to link to the Twispay hosted payment page from a third party website.
 
-Depending on the wanted order type and the other parameters (like customer data etc.)
+Depending on the order type and the other parameters (like customer data etc.)
 a form with a submit button can be generated together with the required data checksum.
 
 ## Examples
@@ -24,7 +24,7 @@ To be able to identify orders inside Twispay, a unique order ID need to be passe
 ```php
 // instantiate a purchase order object
 // total order amount and currency need to be set
-$order = new OrderPurchase('unique-order-id', 65.59, 'USD');
+$order = new OrderPurchase('unique-order-id', 65.59, Currency::USD);
 ```
 
 Either add order description or one or more order items.
@@ -36,11 +36,11 @@ $order->setDescription('order description goes here');
 
 ```php
 // or add one or more order items 
-// together with their price and quantity
+// together with their price (including VAT) and quantity
 $order->addItem(
-    new Item('item 1 description goes here', 12.59, 1)
+    new Item('item #1 description goes here', 12.59, 1)
 )->addItem(
-    new Item('item 2 description goes here', 26.50, 2)
+    new Item('item #2 description goes here', 26.50, 2)
 );
 ```
 
@@ -53,9 +53,9 @@ $payment = new Payment(1, $customer, $order);
 // validate data to be sure it passes Twispay validation
 try {
     $payment->validate();
-} catch (ValidationException $e) {
+} catch (ValidationException $exception) {
     // do something on validation error
-    throw $e;
+    throw $exception;
 }
 ```
 
@@ -76,7 +76,8 @@ $formData = $payment->toArray();
 $checksum = $payment->getChecksum('secret-key');
 ```
 The form fields names are the same as the keys set in the array returned by 
-the call to `Payment::toArray()`. 
+the call to `Payment::toArray()`. The checksum need to be sent using the name
+`checksum` for the respective form field.
 
 <b>Note:</b> If you want to generate the form with your own code then
 make sure no other form fields are sent with the POST request

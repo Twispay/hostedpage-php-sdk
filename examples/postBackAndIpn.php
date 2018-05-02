@@ -14,9 +14,8 @@ require_once 'bootstrap.php';
 // should be read from your APP config
 $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 
-// site ID and secret key are provided by Twispay
-// replace those with your own
-$siteId = $twispayConfig['siteId'];
+// secret key is provided by Twispay
+// replace it with your own
 $secretKey = $twispayConfig['secretKey'];
 
 // init response object

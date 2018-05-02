@@ -1,0 +1,27 @@
+{
+  "name": "Twispay/hostedpage-php-sdk",
+  "description": "Twispay hosted payment page SDK for PHP",
+  "keywords": ["Twispay", "SDK", "PHP"],
+  "homepage": "http://twispay.com",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dragos URSU",
+      "email": "dragos.ursu@cmdnetwork.ro"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.8.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Twispay\\": "src/Twispay/",
+      "Mocks\\": "tests/Mocks/",
+      "Unit\\": "tests/Unit/"
+    }
+  }
+}

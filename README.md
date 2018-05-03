@@ -44,12 +44,12 @@ $order->addItem(
 );
 ```
 
-Instantiate a payment object, a Twispay `site` ID need to be passed. 
+Instantiate a payment object, the `site` ID and the secret key are provided by Twispay. 
 
 ```php
-// first parameter is the site ID provided by Twispay
-$payment = new Payment(1, $customer, $order);
-
+// first two parameters are the site ID and the secret key
+$payment = new Payment(1, 'secret-key', $customer, $order);
+ 
 // validate data to be sure it passes Twispay validation
 try {
     $payment->validate();
@@ -66,14 +66,15 @@ the secret key provided by Twispay.
 ```php
 // generate the pay button and form
 $form = new PaymentForm($payment);
-echo $form->getHtmlForm('secret-key');
+echo $form->getHtmlForm();
 ```
 
 ```php
 // or make something with the data
 $formData = $payment->toArray();
+
 // get the checksum
-$checksum = $payment->getChecksum('secret-key');
+$checksum = $payment->getChecksum();
 ```
 The form fields names are the same as the keys set in the array returned by 
 the call to `Payment::toArray()`. The checksum need to be sent using the name

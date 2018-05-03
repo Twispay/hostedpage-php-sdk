@@ -28,12 +28,11 @@ class MockPayment implements PaymentInterface
     /**
      * Method getChecksum
      *
-     * @param string $secretKey
      * @param array $data
      *
      * @return string
      */
-    public function getChecksum($secretKey, array $data)
+    public function getChecksum(array $data)
     {
         return '';
     }

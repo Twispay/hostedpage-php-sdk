@@ -19,23 +19,23 @@ use TypeError;
 class PaymentTest extends TestCase
 {
     /**
-     * Method testCanBeCreatedFromSiteIdCustomerAndOrder
+     * Method testCanBeCreatedFromSiteIdSecretKeyCustomerAndOrder
      */
-    public function testCanBeCreatedFromSiteIdCustomerAndOrder()
+    public function testCanBeCreatedFromSiteIdSecretKeyCustomerAndOrder()
     {
         $this->assertInstanceOf(
             Payment::class,
-            new Payment(1, new MockCustomer(), new MockOrderPurchase())
+            new Payment(1, 'secret-key', new MockCustomer(), new MockOrderPurchase())
         );
     }
 
     /**
-     * Method testCannotBeCreatedWithoutOrderOrCustomer
+     * Method testCannotBeCreatedWithoutValidCustomerOrOrder
      *
      * @expectedException TypeError
      */
-    public function testCannotBeCreatedWithoutCustomerOrOrder()
+    public function testCannotBeCreatedWithoutValidCustomerOrOrder()
     {
-        new Payment(null, null, null);
+        new Payment(null, null, 'string', 'string');
     }
 }

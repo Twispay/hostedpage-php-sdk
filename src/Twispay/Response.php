@@ -62,19 +62,22 @@ class Response
     /** @var array $customFields */
     protected $customFields;
 
+    /** @var string $secretKey */
+    protected $secretKey;
+
     /** @var array $config */
     protected $config;
 
     /**
      * Response constructor.
      *
+     * @param string $secretKey
      * @param array $config
      */
-    public function __construct(array $config = [])
+    public function __construct($secretKey = null, array $config = [])
     {
-        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-        $liveConfig = $twispayConfig['live'];
-        $this->config = array_merge($liveConfig, $config);
+        $this->secretKey = $secretKey;
+        $this->setConfig($config);
         $this->errors = [];
         $this->customData = [];
         $this->customFields = [];
@@ -144,12 +147,11 @@ class Response
     /**
      * Method loadData
      *
-     * @param string $secretKey
      * @param null|string|array $dataSource
      *
      * @throws ResponseException
      */
-    public function loadData($secretKey, $dataSource = null)
+    public function loadData($dataSource = null)
     {
         if (is_null($dataSource)) {
             $dataSource = empty($_POST['opensslResult'])
@@ -169,12 +171,63 @@ class Response
         if (empty($dataSource)) {
             throw new ResponseException('Missing response data', ErrorCode::RESPONSE_MISSING);
         }
-        $data = $this->decrypt($dataSource, $secretKey);
+        if (strlen($this->secretKey) == 0) {
+            throw new ResponseException("Can't decrypt response, missing secret key", ErrorCode::SECRET_KEY_MISSING);
+        }
+        $data = $this->decrypt($dataSource, $this->secretKey);
         $data = json_decode($data, true, 4);
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new ResponseException('Invalid response data ' . json_last_error(), ErrorCode::RESPONSE_INVALID_DATA);
         }
         $this->initFrom($data);
+    }
+
+    /**
+     * Method getSecretKey
+     *
+     * @return string
+     */
+    public function getSecretKey()
+    {
+        return $this->secretKey;
+    }
+
+    /**
+     * Method setSecretKey
+     *
+     * @param string $secretKey
+     *
+     * @return $this
+     */
+    public function setSecretKey($secretKey)
+    {
+        $this->secretKey = $secretKey;
+        return $this;
+    }
+
+    /**
+     * Method getConfig
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Method setConfig
+     *
+     * @param array $config
+     *
+     * @return Response
+     */
+    public function setConfig(array $config)
+    {
+        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+        $liveConfig = $twispayConfig['live'];
+        $this->config = array_merge($liveConfig, $config);
+        return $this;
     }
 
     /**

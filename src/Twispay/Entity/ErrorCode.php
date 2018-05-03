@@ -17,6 +17,9 @@ class ErrorCode
     const CARD_ID_INVALID = 104;
     const EMAIL_INVALID = 105;
     const CUSTOM_DATA_INVALID = 106;
+    const SECRET_KEY_MISSING = 107;
+    const CUSTOMER_MISSING = 108;
+    const ORDER_MISSING = 109;
 
     const CUSTOMER_ID_MISSING = 201;
     const CUSTOMER_ID_INVALID = 202;

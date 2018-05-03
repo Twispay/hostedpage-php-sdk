@@ -33,11 +33,9 @@ class PaymentForm
         array $config = []
     )
     {
-        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-        $liveConfig = $twispayConfig['live'];
-        $this->config = array_merge($liveConfig, $config);
-        $this->setPayment($payment)
-            ->setIsPopup($isPopup);
+        $this->payment = $payment;
+        $this->isPopup = $isPopup;
+        $this->setConfig($config);
     }
 
     /**
@@ -87,6 +85,31 @@ class PaymentForm
     }
 
     /**
+     * Method getConfig
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Method setConfig
+     *
+     * @param array $config
+     *
+     * @return PaymentForm
+     */
+    public function setConfig($config)
+    {
+        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+        $liveConfig = $twispayConfig['live'];
+        $this->config = array_merge($liveConfig, $config);
+        return $this;
+    }
+
+    /**
      * Method getHtmlFormAttributes
      *
      * @param array $formAttributes
@@ -119,13 +142,12 @@ class PaymentForm
     /**
      * Method getHtmlForm
      *
-     * @param string $secretKey
      * @param string|null $submitButton
      * @param array $formAttributes
      *
      * @return string
      */
-    public function getHtmlForm($secretKey, $submitButton = null, array $formAttributes = [])
+    public function getHtmlForm($submitButton = null, array $formAttributes = [])
     {
         $form = '';
         if ($this->isPopup) {
@@ -148,7 +170,7 @@ class PaymentForm
             }
             $form .= '<input type="hidden" name="' . $field . '" value="' . htmlspecialchars($value) . '">' . "\n";
         }
-        $checksum = $this->payment->getChecksum($secretKey, $formData);
+        $checksum = $this->payment->getChecksum($formData);
         $form .= '<input type="hidden" name="checksum" value="' . $checksum . '">' . "\n";
         if (empty($submitButton)) {
             $submitButton = '<input type="submit" class="twispaySubmit" value="Purchase">';

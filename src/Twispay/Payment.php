@@ -20,19 +20,22 @@ class Payment implements PaymentInterface
     /** @var int $siteId Provided by Twispay */
     protected $siteId;
 
+    /** @var string $secretKey Provided by Twispay */
+    protected $secretKey;
+
     /** @var CustomerInterface $customer */
     protected $customer;
 
     /** @var OrderInterface $order */
     protected $order;
 
-    /** @var string|null $cardTransactionMode */
+    /** @var string $cardTransactionMode */
     protected $cardTransactionMode;
 
-    /** @var int|null $cardId The ID of a previously used card for this customer */
+    /** @var int $cardId The ID of a previously used card for this customer */
     protected $cardId;
 
-    /** @var string|null $invoiceEmail Alternative email address to send invoice to */
+    /** @var string $invoiceEmail Alternative email address to send invoice to */
     protected $invoiceEmail;
 
     /** @var array $customData */
@@ -42,19 +45,22 @@ class Payment implements PaymentInterface
      * Payment constructor.
      *
      * @param string $siteId
+     * @param string $secretKey
      * @param CustomerInterface $customer
      * @param OrderInterface $order
      */
     public function __construct(
-        $siteId,
-        CustomerInterface $customer,
-        OrderInterface $order
+        $siteId = null,
+        $secretKey = null,
+        CustomerInterface $customer = null,
+        OrderInterface $order = null
     )
     {
-        $this->setSiteId($siteId)
-            ->setCustomer($customer)
-            ->setOrder($order)
-            ->setCustomData([]);
+        $this->siteId = $siteId;
+        $this->secretKey = $secretKey;
+        $this->customer = $customer;
+        $this->order = $order;
+        $this->customData = [];
     }
 
     /**
@@ -81,9 +87,32 @@ class Payment implements PaymentInterface
     }
 
     /**
+     * Method getSecretKey
+     *
+     * @return string
+     */
+    public function getSecretKey()
+    {
+        return $this->secretKey;
+    }
+
+    /**
+     * Method setSecretKey
+     *
+     * @param string $secretKey
+     *
+     * @return $this
+     */
+    public function setSecretKey($secretKey)
+    {
+        $this->secretKey = $secretKey;
+        return $this;
+    }
+
+    /**
      * Method getCustomer
      *
-     * @return CustomerInterface
+     * @return CustomerInterface|null
      */
     public function getCustomer()
     {
@@ -106,7 +135,7 @@ class Payment implements PaymentInterface
     /**
      * Method getOrder
      *
-     * @return OrderInterface
+     * @return OrderInterface|null
      */
     public function getOrder()
     {
@@ -152,7 +181,7 @@ class Payment implements PaymentInterface
     /**
      * Method getCardId
      *
-     * @return int|null
+     * @return int
      */
     public function getCardId()
     {
@@ -162,7 +191,7 @@ class Payment implements PaymentInterface
     /**
      * Method setCardId
      *
-     * @param int|null $cardId
+     * @param int $cardId
      *
      * @return $this
      */
@@ -175,7 +204,7 @@ class Payment implements PaymentInterface
     /**
      * Method getInvoiceEmail
      *
-     * @return null|string
+     * @return string
      */
     public function getInvoiceEmail()
     {
@@ -185,7 +214,7 @@ class Payment implements PaymentInterface
     /**
      * Method setInvoiceEmail
      *
-     * @param null|string $invoiceEmail
+     * @param string $invoiceEmail
      *
      * @return $this
      */
@@ -255,8 +284,8 @@ class Payment implements PaymentInterface
                 'invoiceEmail' => $this->invoiceEmail,
                 'custom' => $this->customData,
             ],
-            $this->customer->toArray(),
-            $this->order->toArray()
+            is_null($this->customer) ? [] : $this->customer->toArray(),
+            is_null($this->order) ? [] : $this->order->toArray()
         );
     }
 
@@ -280,16 +309,15 @@ class Payment implements PaymentInterface
     /**
      * Method getChecksum
      *
-     * @param string $secretKey
      * @param array $data
      *
      * @return string
      */
-    public function getChecksum($secretKey, array $data)
+    public function getChecksum(array $data)
     {
         $this->recursiveSortAndPrepare($data);
         $rawData = http_build_query($data);
-        return base64_encode(hash_hmac('sha512', $rawData, $secretKey, true));
+        return base64_encode(hash_hmac('sha512', $rawData, $this->secretKey, true));
     }
 
     /**
@@ -309,8 +337,18 @@ class Payment implements PaymentInterface
             throw new ValidationException('*siteId* is invalid, not a positive integer number', ErrorCode::SITE_ID_INVALID);
         }
 
+        if (strlen($this->secretKey) == 0) {
+            throw new ValidationException('*secretKey* is a required field', ErrorCode::SECRET_KEY_MISSING);
+        }
+
+        if (is_null($this->customer)) {
+            throw new ValidationException('*customer* is a required field', ErrorCode::CUSTOMER_MISSING);
+        }
         $this->customer->validate();
 
+        if (is_null($this->order)) {
+            throw new ValidationException('*order* is a required field', ErrorCode::ORDER_MISSING);
+        }
         $this->order->validate();
 
         if (

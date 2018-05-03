@@ -9,7 +9,7 @@
 $twispayConfig = [
     'siteId' => 19246,
     'secretKey' => '12345678901234567890abcdef123456',
-    'twispay' => [
+    'config' => [
         'paymentUrl' => 'https://secure-stage.twispay.com',
         'popupJsUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.js',
         'popupCssUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.css',

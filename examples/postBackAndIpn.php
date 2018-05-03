@@ -17,15 +17,16 @@ $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 // secret key is provided by Twispay
 // replace it with your own
 $secretKey = $twispayConfig['secretKey'];
+$config = $twispayConfig['config'];
 
 // init response object
-$response = new Response($twispayConfig['twispay']);
+$response = new Response($secretKey, $config);
 
 // load data from $_POST['opensslResult'] and $_GET['opensslResult'] (in this order)
 // alternatively you can pass an array containing the `opensslResult` key
 // or the encrypted response as a string value
 try {
-    $response->loadData($secretKey);
+    $response->loadData();
 } catch (ResponseException $e) {
     // do something on error
     throw $e;

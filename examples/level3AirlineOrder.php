@@ -25,6 +25,7 @@ $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 // replace those with your own
 $siteId = $twispayConfig['siteId'];
 $secretKey = $twispayConfig['secretKey'];
+$config = $twispayConfig['config'];
 
 // init customer object
 // you need to replace `unique-customer-ID` with your own current customer ID
@@ -70,7 +71,7 @@ $level3 = new Level3Airline(
 $order->setLevel3($level3);
 
 // init payment object
-$payment = new Payment($siteId, $customer, $order);
+$payment = new Payment($siteId, $secretKey, $customer, $order);
 
 // validate all data before sending it to Twispay
 try {
@@ -87,11 +88,11 @@ try {
 $form = new PaymentForm(
     $payment,
     false,
-    $twispayConfig['twispay']
+    $config
 );
 
 // make sure no extra fields are added to the form or they must be taken into account when computing the checksum
-$form = $form->getHtmlForm($secretKey);
+$form = $form->getHtmlForm();
 
 // alternatively you can get the form data and build the form yourself
 // the form filed names are the same with the keys of the (multidimensional) array

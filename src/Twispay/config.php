@@ -8,14 +8,12 @@
 $twispayConfig = [
     'live' => [
         'paymentUrl' => 'https://secure.twispay.com',
-        'popupJsUrl' => 'https://secure.twispay.com/js/sdk/v1/TwisPay.js',
-        'popupCssUrl' => 'https://secure.twispay.com/js/sdk/v1/TwisPay.css',
+        'popupJsUrl' => 'https://secure.twispay.com/assets/script',
         'sslAlgorithm' => 'aes-256-cbc',
     ],
     'stage' => [
         'paymentUrl' => 'https://secure-stage.twispay.com',
-        'popupJsUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.js',
-        'popupCssUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.css',
+        'popupJsUrl' => 'https://secure-stage.twispay.com/assets/script',
         'sslAlgorithm' => 'aes-256-cbc',
     ],
 ];

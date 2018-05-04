@@ -11,8 +11,7 @@ $twispayConfig = [
     'secretKey' => '12345678901234567890abcdef123456',
     'config' => [
         'paymentUrl' => 'https://secure-stage.twispay.com',
-        'popupJsUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.js',
-        'popupCssUrl' => 'https://secure-stage.twispay.com/js/sdk/v1/TwisPay.css',
+        'popupJsUrl' => 'https://secure-stage.twispay.com/assets/script',
         'sslAlgorithm' => 'aes-256-cbc',
     ],
 ];

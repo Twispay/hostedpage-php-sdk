@@ -2,6 +2,8 @@
 
 namespace Twispay;
 
+use Exception;
+
 /**
  * Class PaymentForm
  *
@@ -11,6 +13,9 @@ namespace Twispay;
  */
 class PaymentForm
 {
+    /** @var int $counter */
+    static $counter = 0;
+
     /** @var PaymentInterface $payment */
     protected $payment;
 
@@ -132,11 +137,79 @@ class PaymentForm
                 case 'method':
                 case 'enctype':
                 case 'accept-charset':
-                    continue;
+                    break;
+                default:
+                    $attributes[] = $attribute . '="' . htmlspecialchars($value) . '"';
             }
-            $attributes[] = $attribute . '="' . htmlspecialchars($value) . '"';
         }
         return implode(' ', $attributes);
+    }
+
+    /**
+     * Method getHtmlFormJs
+     *
+     * @return string
+     */
+    protected function getHtmlFormJs()
+    {
+        $htmlFormJs = <<<JS
+        <script type="text/javascript">
+            if (typeof twispayAppendPopupJs == 'undefined') {
+                function twispayAppendPopupJs() {
+                    var list = document.getElementsByTagName('script');
+                    var i = list.length, flag = false;
+                    while (i--) {
+                        if (list[i].src === "{$this->config['popupJsUrl']}") {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
+                        var tag = document.createElement('script');
+                        tag.src = "{$this->config['popupJsUrl']}";
+                        document.getElementsByTagName('body')[0].appendChild(tag);
+                    }
+                }    
+                setTimeout(twispayAppendPopupJs, 200);
+            }
+        </script>
+JS;
+        return $htmlFormJs;
+    }
+
+    /**
+     * Method getSubmitButtonId
+     *
+     * @param string $submitButton
+     *
+     * @return null
+     */
+    protected function getSubmitButtonId($submitButton)
+    {
+        if (preg_match('/\s+id="([^"]+)"/i', $submitButton, $matches) == 1) {
+            return $matches[1];
+        }
+        return null;
+    }
+
+    /**
+     * Method getHtmlButtonJs
+     *
+     * @param string $buttonId
+     *
+     * @return string
+     */
+    protected function getHtmlButtonJs($buttonId)
+    {
+        $htmlButtonJs = <<<JS
+        <script type="text/javascript">
+            if (typeof twispayButtonsSelectors == 'undefined') {
+                twispayButtonsSelectors = [];
+            }
+            twispayButtonsSelectors.push('#{$buttonId}');
+        </script>
+JS;
+        return $htmlButtonJs;
     }
 
     /**
@@ -146,40 +219,46 @@ class PaymentForm
      * @param array $formAttributes
      *
      * @return string
+     *
+     * @throws Exception
      */
     public function getHtmlForm($submitButton = null, array $formAttributes = [])
     {
-        $form = '';
-        if ($this->isPopup) {
-            $form .= '<link rel="stylesheet" type="text/css" href="' . $this->config['popupCssUrl'] . '">';
-        }
-        $form .= '<form ' . $this->getHtmlFormAttributes($formAttributes) . '>' . "\n";
+        $htmlForm = '<form ' . $this->getHtmlFormAttributes($formAttributes) . '>' . "\n";
         $formData = $this->payment->toArray();
         foreach ($formData as $field => $value) {
             if (is_array($value)) {
                 foreach ($value as $key => $entry) {
                     if (is_array($entry)) {
                         foreach ($entry as $subKey => $subValue) {
-                            $form .= '<input type="hidden" name="' . $field . '[' . $key . ']' . '[' . $subKey . ']" value="' . htmlspecialchars($subValue) . '">' . "\n";
+                            $htmlForm .= '<input type="hidden" name="' . $field . '[' . $key . ']' . '[' . $subKey . ']" value="' . htmlspecialchars($subValue) . '">' . "\n";
                         }
                     } else {
-                        $form .= '<input type="hidden" name="' . $field . '[' . $key . ']" value="' . htmlspecialchars($entry) . '">' . "\n";
+                        $htmlForm .= '<input type="hidden" name="' . $field . '[' . $key . ']" value="' . htmlspecialchars($entry) . '">' . "\n";
                     }
                 }
                 continue;
             }
-            $form .= '<input type="hidden" name="' . $field . '" value="' . htmlspecialchars($value) . '">' . "\n";
+            $htmlForm .= '<input type="hidden" name="' . $field . '" value="' . htmlspecialchars($value) . '">' . "\n";
         }
         $checksum = $this->payment->getChecksum($formData);
-        $form .= '<input type="hidden" name="checksum" value="' . $checksum . '">' . "\n";
+        $htmlForm .= '<input type="hidden" name="checksum" value="' . $checksum . '">' . "\n";
         if (empty($submitButton)) {
-            $submitButton = '<input type="submit" class="twispaySubmit" value="Purchase">';
+            $buttonId = md5($checksum . self::$counter);
+            $submitButton = '<input id="' . $buttonId . '" type="submit" class="twispaySubmit" value="Purchase">';
+            self::$counter++;
+        } else {
+            $buttonId = $this->getSubmitButtonId($submitButton);
+            if (empty($buttonId)) {
+                throw new Exception("The submit button must have a unique ID attribute set");
+            }
         }
-        $form .= $submitButton . "\n";
+        $htmlForm .= $submitButton . "\n";
         if ($this->isPopup) {
-            $form .= '<script type="text/javascript" src="' . $this->config['popupJsUrl'] . '"></script>';
+            $htmlForm .= $this->getHtmlButtonJs($buttonId);
+            $htmlForm .= $this->getHtmlFormJs();
         }
-        $form .= '</form>';
-        return $form;
+        $htmlForm .= '</form>';
+        return $htmlForm;
     }
 }

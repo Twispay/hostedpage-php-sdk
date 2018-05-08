@@ -106,7 +106,7 @@ $form = $form->getHtmlForm();
 // $formData = $payment->toArray();
 
 // the form checksum must be added too with a field named `checksum`
-// $checksum = $payment->getChecksum($secretKey, $formData);
+// $checksum = $payment->getChecksum($formData);
 
 // output the form with the `Purchase` button
 echo $form;

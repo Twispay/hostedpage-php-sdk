@@ -22,7 +22,9 @@ class MockCustomer implements CustomerInterface
      */
     public function toArray()
     {
-        return [];
+        return [
+            'customer' => 'sample'
+        ];
     }
 
     /**

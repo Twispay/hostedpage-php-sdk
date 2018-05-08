@@ -32,7 +32,9 @@ class MockOrderRecurring implements OrderInterface
      */
     public function toArray()
     {
-        return [];
+        return [
+            'order' => 'sample'
+        ];
     }
 
     /**

@@ -22,7 +22,9 @@ class MockPayment implements PaymentInterface
      */
     public function toArray()
     {
-        return [];
+        return [
+            'payment' => 'sample'
+        ];
     }
 
     /**

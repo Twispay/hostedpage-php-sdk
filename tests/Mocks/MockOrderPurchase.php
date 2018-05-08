@@ -32,7 +32,9 @@ class MockOrderPurchase implements OrderInterface
      */
     public function toArray()
     {
-        return [];
+        return [
+            'order' => 'sample'
+        ];
     }
 
     /**

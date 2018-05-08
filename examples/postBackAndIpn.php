@@ -9,10 +9,10 @@
 use Twispay\Exception\ResponseException;
 use Twispay\Response;
 
-require_once 'bootstrap.php';
+require 'bootstrap.php';
 
 // should be read from your APP config
-$twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+$twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 
 // secret key is provided by Twispay
 // replace it with your own

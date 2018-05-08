@@ -262,7 +262,7 @@ class Payment implements PaymentInterface
             if (!is_array($this->customData[$key])) {
                 $this->customData[$key] = [$this->customData[$key]];
             }
-            $this->customData[$key] = $value;
+            $this->customData[$key][] = $value;
             return $this;
         }
         $this->customData[$key] = $value;

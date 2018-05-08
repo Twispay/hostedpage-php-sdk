@@ -224,7 +224,7 @@ class Response
      */
     public function setConfig(array $config)
     {
-        $twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+        $twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
         $liveConfig = $twispayConfig['live'];
         $this->config = array_merge($liveConfig, $config);
         return $this;

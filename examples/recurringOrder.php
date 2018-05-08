@@ -14,10 +14,10 @@ use Twispay\Exception\ValidationException;
 use Twispay\Payment;
 use Twispay\PaymentForm;
 
-require_once 'bootstrap.php';
+require 'bootstrap.php';
 
 // should be read from your APP config
-$twispayConfig = require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+$twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
 
 // site ID and secret key are provided by Twispay
 // replace those with your own

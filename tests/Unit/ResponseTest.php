@@ -16,7 +16,7 @@ use Twispay\Response;
 class ResponseTest extends TestCase
 {
     /**
-     * Method v
+     * Method testShouldFailDecodeResponseWithInvalidSecretKey
      *
      * @expectedException \Twispay\Exception\ResponseException
      */

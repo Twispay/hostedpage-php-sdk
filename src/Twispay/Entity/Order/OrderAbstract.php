@@ -5,6 +5,7 @@ namespace Twispay\Entity\Order;
 use Twispay\Entity\ErrorCode;
 use Twispay\Entity\Item\Item;
 use Twispay\Entity\Item\ItemList;
+use Twispay\Entity\Item\ItemListInterface;
 use Twispay\Exception\ValidationException;
 
 /**
@@ -31,7 +32,7 @@ abstract class OrderAbstract implements OrderInterface
     /** @var string|null $description Required when no $items defined with max 77056 chars */
     protected $description;
 
-    /** @var ItemList $itemList */
+    /** @var ItemListInterface $itemList */
     protected $itemList;
 
     /** @var string[] $orderTags Unique order tags */
@@ -48,9 +49,9 @@ abstract class OrderAbstract implements OrderInterface
      * @param string $currency
      */
     public function __construct(
-        $orderId,
-        $amount,
-        $currency
+        $orderId = null,
+        $amount = null,
+        $currency = null
     )
     {
         $this->setOrderId($orderId)
@@ -165,7 +166,7 @@ abstract class OrderAbstract implements OrderInterface
     /**
      * Method getItemList
      *
-     * @return ItemList
+     * @return ItemListInterface
      */
     public function getItemList()
     {
@@ -175,11 +176,11 @@ abstract class OrderAbstract implements OrderInterface
     /**
      * Method setItemList
      *
-     * @param ItemList $itemList
+     * @param ItemListInterface $itemList
      *
      * @return $this
      */
-    public function setItemList(ItemList $itemList)
+    public function setItemList(ItemListInterface $itemList)
     {
         $this->itemList = $itemList;
         return $this;

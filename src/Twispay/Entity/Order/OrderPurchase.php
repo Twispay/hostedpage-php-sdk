@@ -3,6 +3,7 @@
 namespace Twispay\Entity\Order;
 
 use Twispay\Entity\ErrorCode;
+use Twispay\Entity\Item\ItemLevel3;
 use Twispay\Exception\ValidationException;
 
 /**
@@ -29,9 +30,9 @@ class OrderPurchase extends OrderAbstract
      * @param Level3interface|null $level3
      */
     public function __construct(
-        $orderId,
-        $amount,
-        $currency,
+        $orderId = null,
+        $amount = null,
+        $currency = null,
         $level3 = null
     )
     {
@@ -90,6 +91,12 @@ class OrderPurchase extends OrderAbstract
 
             if (count($this->itemList) == 0) {
                 throw new ValidationException('*items* must be set when using level3 data', ErrorCode::LEVEL3_DATA_INVALID);
+            }
+
+            foreach ($this->itemList as $item) {
+                if (!is_a($item, ItemLevel3::class)) {
+                    throw new ValidationException('*items* must be of level3 type', ErrorCode::ITEM_LIST_INVALID);
+                }
             }
 
             $calculatedAmount = $this->itemList->getAmount();

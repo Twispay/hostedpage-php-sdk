@@ -12,7 +12,7 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class Item
+class Item implements ItemInterface
 {
     /** @var string $item Item name */
     protected $item;
@@ -31,9 +31,9 @@ class Item
      * @param int $units
      */
     public function __construct(
-        $item,
-        $unitPrice,
-        $units
+        $item = null,
+        $unitPrice = null,
+        $units = null
     )
     {
         $this->setitem($item)

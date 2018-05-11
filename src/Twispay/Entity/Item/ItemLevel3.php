@@ -12,7 +12,7 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class ItemLevel3 extends Item
+class ItemLevel3 extends Item implements ItemInterface
 {
     /** @var string $itemType Item type @see ItemType */
     protected $itemType;
@@ -38,13 +38,13 @@ class ItemLevel3 extends Item
      * @param float $vatPercent
      */
     public function __construct(
-        $item,
-        $unitPrice,
-        $units,
-        $itemType,
-        $code,
-        $description,
-        $vatPercent
+        $item = null,
+        $unitPrice = null,
+        $units = null,
+        $itemType = null,
+        $code = null,
+        $description = null,
+        $vatPercent = null
     )
     {
         parent::__construct(

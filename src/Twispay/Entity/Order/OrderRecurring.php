@@ -39,11 +39,11 @@ class OrderRecurring extends OrderAbstract
      * @param int $intervalValue
      */
     public function __construct(
-        $orderId,
-        $amount,
-        $currency,
-        $intervalType,
-        $intervalValue
+        $orderId = null,
+        $amount = null,
+        $currency = null,
+        $intervalType = null,
+        $intervalValue = null
     )
     {
         parent::__construct($orderId, $amount, $currency);

@@ -50,6 +50,7 @@ class ErrorCode
     const TRIAL_AMOUNT_INVALID = 315;
     const FIRST_BILL_DATE_MISSING = 316;
     const FIRST_BILL_DATE_INVALID = 317;
+    const ITEM_LIST_INVALID = 318;
 
     const ITEM_MISSING = 401;
     const ITEM_INVALID = 402;

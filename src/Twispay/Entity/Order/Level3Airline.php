@@ -57,15 +57,15 @@ class Level3Airline extends Level3Abstract implements Level3interface
      * @param string $travelAgencyName
      */
     public function __construct(
-        $ticketNumber,
-        $passengerName,
-        $flightNumber,
-        $departureDate,
-        $departureAirportCode,
-        $arrivalAirportCode,
-        $carrierCode,
-        $travelAgencyCode,
-        $travelAgencyName
+        $ticketNumber = null,
+        $passengerName = null,
+        $flightNumber = null,
+        $departureDate = null,
+        $departureAirportCode = null,
+        $arrivalAirportCode = null,
+        $carrierCode = null,
+        $travelAgencyCode = null,
+        $travelAgencyName = null
     )
     {
         $this->setTicketNumber($ticketNumber)

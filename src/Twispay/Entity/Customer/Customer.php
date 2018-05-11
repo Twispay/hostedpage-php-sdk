@@ -53,7 +53,7 @@ class Customer implements CustomerInterface
      * @param string $identifier Customer ID assigned by merchant with max 92 chars
      */
     public function __construct(
-        $identifier
+        $identifier = null
     )
     {
         $this->setIdentifier($identifier)

@@ -2,6 +2,7 @@
 
 namespace Twispay\Entity\Item;
 
+use Twispay\Entity\ErrorCode;
 use Twispay\Exception\ValidationException;
 
 /**
@@ -11,10 +12,20 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class ItemList implements \ArrayAccess, \Iterator, \Countable
+class ItemList implements \ArrayAccess, \Iterator, \Countable, ItemListInterface
 {
     /** @var Item[] $list */
     protected $list = [];
+
+    /**
+     * ItemList constructor
+     *
+     * @param array $list
+     */
+    public function __construct(array $list = [])
+    {
+        $this->list = $list;
+    }
 
     /**
      * Method offsetSet
@@ -162,7 +173,17 @@ class ItemList implements \ArrayAccess, \Iterator, \Countable
      * @throws ValidationException
      */
     public function validate() {
+        $itemType = null;
+        /** @var Item $item */
         foreach ($this->list as $item) {
+            if (!is_object($item) || !is_a($item, Item::class)) {
+                throw new ValidationException("Invalid object type in list", ErrorCode::ITEM_LIST_INVALID);
+            }
+            if (is_null($itemType)) {
+                $itemType = get_class($item);
+            } elseif (get_class($item) != $itemType) {
+                throw new ValidationException("The items must be of the same type", ErrorCode::ITEM_LIST_INVALID);
+            }
             $item->validate();
         }
     }

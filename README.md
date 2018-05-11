@@ -60,8 +60,7 @@ try {
 ```
 
 Use the data (`array` format) and the calculated checksum to generate you own form and
-submit button or use the SDK. In both cases you will need to pass
-the secret key provided by Twispay.
+submit button or use the SDK.
 
 ```php
 // generate the pay button and form

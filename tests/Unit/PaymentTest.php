@@ -168,4 +168,162 @@ class PaymentTest extends TestCase
             $checksum
         );
     }
+
+    /**
+     * Method testShouldPassValidation
+     */
+    public function testShouldPassValidation()
+    {
+        $payment = $this->getValidPayment();
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithMissingSiteId
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::SITE_ID_MISSING
+     */
+    public function testShouldFailValidationWithMissingSiteId()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setSiteId(null);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithInvalidSiteId
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::SITE_ID_INVALID
+     */
+    public function testShouldFailValidationWithInvalidSiteId()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setSiteId(0);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithMissingSecretKey
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::SECRET_KEY_MISSING
+     */
+    public function testShouldFailValidationWithMissingSecretKey()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setSecretKey(null);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithMissingCustomer
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::CUSTOMER_MISSING
+     */
+    public function testShouldFailValidationWithMissingCustomer()
+    {
+        $payment = $this->getValidPayment(false);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithMissingOrder
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::ORDER_MISSING
+     */
+    public function testShouldFailValidationWithMissingOrder()
+    {
+        $payment = $this->getValidPayment(true, false);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithInvalidCardTransactionMode
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::TRANSACTION_MODE_INVALID
+     */
+    public function testShouldFailValidationWithInvalidCardTransactionMode()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setCardTransactionMode('invalid');
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithInvalidCardId
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::CARD_ID_INVALID
+     */
+    public function testShouldFailValidationWithInvalidCardId()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setCardId(0);
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithInvalidInvoiceEmail
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::EMAIL_INVALID
+     */
+    public function testShouldFailValidationWithInvalidInvoiceEmail()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setInvoiceEmail('invalid');
+        $payment->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithInvalidCustomData
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::CUSTOM_DATA_INVALID
+     */
+    public function testShouldFailValidationWithInvalidCustomData()
+    {
+        $payment = $this->getValidPayment();
+        $payment->setCustomData([
+            'key' => [
+                'subKey' => [
+                    'subSubKey' => 'value',
+                ],
+            ],
+        ]);
+        $payment->validate();
+    }
+
+    /**
+     * Method getValidPayment
+     *
+     * @param bool $withCustomer
+     * @param bool $withOrder
+     *
+     * @return Payment
+     */
+    protected function getValidPayment($withCustomer = true, $withOrder = true)
+    {
+        $payment = new Payment();
+        $payment->setSiteId(41230)
+            ->setSecretKey('sectret-key')
+            ->setCardId(1546)
+            ->setCardTransactionMode(CardTransactionMode::AUTHENTICATION_AND_CAPTURE)
+            ->setCustomData([
+                'key' => 'value'
+            ])
+            ->setInvoiceEmail('valid@email.com');
+        if ($withCustomer) {
+            $payment->setCustomer(new MockCustomer());
+        }
+        if ($withOrder) {
+            $payment->setOrder(new MockOrderPurchase());
+        }
+        return $payment;
+    }
 }

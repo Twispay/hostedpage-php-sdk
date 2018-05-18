@@ -2,6 +2,8 @@
 
 namespace Unit\Item;
 
+use Mocks\MockItem;
+use Mocks\MockItemLevel3;
 use PHPUnit\Framework\TestCase;
 use Twispay\Entity\Item\Item;
 use Twispay\Entity\Item\ItemLevel3;
@@ -86,6 +88,44 @@ class ItemListTest extends TestCase
             ],
             $itemLevel3List->toArray()
         );
+    }
+
+    /**
+     * Method testShouldPassValidation
+     */
+    public function testShouldPassValidation()
+    {
+        $itemList = $this->getValidItemList();
+        $itemList->validate();
+        $itemList = $this->getValidItemLevel3List();
+        $itemList->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWhenInvalidItem
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::ITEM_LIST_INVALID
+     */
+    public function testShouldFailValidationWhenInvalidItem()
+    {
+        $itemList = new ItemList();
+        $itemList[] = '!invalid';
+        $itemList->validate();
+    }
+
+    /**
+     * Method testShouldFailValidationWithDifferentItemtype
+     *
+     * @expectedException \Twispay\Exception\ValidationException
+     * @expectedExceptionCode \Twispay\Entity\ErrorCode::ITEM_LIST_INVALID
+     */
+    public function testShouldFailValidationWithDifferentItemtype()
+    {
+        $itemList = new ItemList();
+        $itemList[] = new MockItem();
+        $itemList[] = new MockItemLevel3();
+        $itemList->validate();
     }
 
     /**

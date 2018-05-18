@@ -49,51 +49,51 @@ class MockItemList implements ItemListInterface
 
     public function current()
     {
-        // TODO: Implement current() method.
+        // empty
     }
 
     public function next()
     {
-        // TODO: Implement next() method.
+        // empty
     }
 
     public function key()
     {
-        // TODO: Implement key() method.
+        // empty
     }
 
     public function valid()
     {
-        // TODO: Implement valid() method.
+        // empty
     }
 
     public function rewind()
     {
-        // TODO: Implement rewind() method.
+        // empty
     }
 
     public function offsetExists($offset)
     {
-        // TODO: Implement offsetExists() method.
+        // empty
     }
 
     public function offsetGet($offset)
     {
-        // TODO: Implement offsetGet() method.
+        // empty
     }
 
     public function offsetSet($offset, $value)
     {
-        // TODO: Implement offsetSet() method.
+        // empty
     }
 
     public function offsetUnset($offset)
     {
-        // TODO: Implement offsetUnset() method.
+        // empty
     }
 
     public function count()
     {
-        // TODO: Implement count() method.
+        // empty
     }
 }

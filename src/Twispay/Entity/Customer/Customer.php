@@ -381,7 +381,7 @@ class Customer implements CustomerInterface
                 throw new ValidationException('*country* is invalid', ErrorCode::COUNTRY_INVALID);
             }
             if (!State::isValid($this->state, $this->country)) {
-                throw new ValidationException('*country* is invalid', ErrorCode::STATE_INVALID);
+                throw new ValidationException('*state* is invalid', ErrorCode::STATE_INVALID);
             }
         } elseif (strlen($this->state) != 0) {
             throw new ValidationException('*state* is invalid, *state* must be set', ErrorCode::STATE_INVALID);

@@ -11,7 +11,7 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-interface ItemListInterface
+interface ItemListInterface extends \ArrayAccess, \Iterator, \Countable
 {
     /**
      * Method toArray

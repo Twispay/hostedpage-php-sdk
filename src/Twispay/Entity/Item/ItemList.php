@@ -12,7 +12,7 @@ use Twispay\Exception\ValidationException;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class ItemList implements \ArrayAccess, \Iterator, \Countable, ItemListInterface
+class ItemList implements ItemListInterface
 {
     /** @var Item[] $list */
     protected $list = [];
@@ -176,7 +176,7 @@ class ItemList implements \ArrayAccess, \Iterator, \Countable, ItemListInterface
         $itemType = null;
         /** @var Item $item */
         foreach ($this->list as $item) {
-            if (!is_object($item) || !is_a($item, Item::class)) {
+            if (!is_object($item) || !is_a($item, ItemInterface::class)) {
                 throw new ValidationException("Invalid object type in list", ErrorCode::ITEM_LIST_INVALID);
             }
             if (is_null($itemType)) {

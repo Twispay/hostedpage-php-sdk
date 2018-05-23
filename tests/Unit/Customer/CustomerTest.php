@@ -241,6 +241,8 @@ class CustomerTest extends TestCase
 
     /**
      * Method getValidCustomer
+     *
+     * @return Customer
      */
     protected function getValidCustomer()
     {

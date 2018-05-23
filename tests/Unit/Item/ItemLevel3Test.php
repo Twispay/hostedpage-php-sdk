@@ -151,6 +151,8 @@ class ItemLevel3Test extends TestCase
 
     /**
      * Method getValidItemLevel3
+     *
+     * @return ItemLevel3
      */
     protected function getValidItemLevel3()
     {

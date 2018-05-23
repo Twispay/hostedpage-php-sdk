@@ -130,6 +130,8 @@ class ItemListTest extends TestCase
 
     /**
      * Method getValidItemList
+     *
+     * @return ItemList
      */
     protected function getValidItemList()
     {
@@ -143,6 +145,8 @@ class ItemListTest extends TestCase
 
     /**
      * Method getValidItemLevel3List
+     *
+     * @return ItemList
      */
     protected function getValidItemLevel3List()
     {

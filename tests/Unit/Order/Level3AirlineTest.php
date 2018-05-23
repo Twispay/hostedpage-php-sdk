@@ -283,6 +283,8 @@ class Level3AirlineTest extends TestCase
 
     /**
      * Method getValidLevel3Airline
+     *
+     * @return Level3Airline
      */
     protected function getValidLevel3Airline()
     {

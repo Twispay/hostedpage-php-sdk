@@ -34,7 +34,7 @@ class MockItemList implements ItemListInterface
      */
     public function getAmount()
     {
-        return 0.0;
+        return 12.56;
     }
 
     /**
@@ -94,6 +94,6 @@ class MockItemList implements ItemListInterface
 
     public function count()
     {
-        // empty
+        return 1;
     }
 }

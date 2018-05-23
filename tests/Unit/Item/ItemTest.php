@@ -120,6 +120,8 @@ class ItemTest extends TestCase
 
     /**
      * Method getValidItem
+     *
+     * @return Item
      */
     protected function getValidItem()
     {

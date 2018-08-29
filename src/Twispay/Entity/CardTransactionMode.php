@@ -17,16 +17,16 @@ class CardTransactionMode
     /**
      * Method isValid
      *
-     * @param string $itemType
+     * @param string $cardTransactionMode
      *
      * @return bool
      */
-    public static function isValid($itemType)
+    public static function isValid($cardTransactionMode)
     {
-        if (empty($itemType)) {
+        if (empty($cardTransactionMode)) {
             return false;
         }
         $list = [self::AUTHENTICATION, self::AUTHENTICATION_AND_CAPTURE];
-        return in_array($itemType, $list);
+        return in_array($cardTransactionMode, $list);
     }
 }

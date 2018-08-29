@@ -3,6 +3,7 @@
 namespace Mocks;
 
 use Twispay\Entity\Order\OrderInterface;
+use Twispay\Entity\Order\OrderType;
 use Twispay\Exception\ValidationException;
 
 /**
@@ -22,7 +23,7 @@ class MockOrderRecurring implements OrderInterface
      */
     public function getOrderType()
     {
-        return 'recurring';
+        return OrderType::RECURRING;
     }
 
     /**

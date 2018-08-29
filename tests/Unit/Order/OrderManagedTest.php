@@ -9,28 +9,28 @@ use Mocks\MockLevel3Airline;
 use PHPUnit\Framework\TestCase;
 use Twispay\Entity\Item\ItemList;
 use Twispay\Entity\Order\Currency;
-use Twispay\Entity\Order\OrderPurchase;
+use Twispay\Entity\Order\OrderManaged;
 use Twispay\Entity\Order\OrderType;
 
 /**
- * Class OrderPurchaseTest
+ * Class OrderManagedTest
  *
  * @category Unit
  * @package Twispay
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class OrderPurchaseTest extends TestCase
+class OrderManagedTest extends TestCase
 {
     /**
      * Method testShouldConvertToArray
      */
     public function testShouldConvertToArray()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
+        $orderManaged = $this->getValidOrderManaged();
         $this->assertEquals(
             [
-                'orderType' => OrderType::PURCHASE,
+                'orderType' => OrderType::MANAGED,
                 'orderId' => 'order-id',
                 'amount' => 12.56,
                 'currency' => 'USD',
@@ -43,7 +43,7 @@ class OrderPurchaseTest extends TestCase
                 'items' => 'sample',
                 'level3' => 'airline',
             ],
-            $orderPurchase->toArray()
+            $orderManaged->toArray()
         );
     }
 
@@ -52,8 +52,8 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldPassValidation()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->validate();
     }
 
     /**
@@ -64,9 +64,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithMissingOrderId()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setOrderId(null);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setOrderId(null);
+        $orderManaged->validate();
     }
 
     /**
@@ -77,9 +77,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidOrderId()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setOrderId(str_repeat('*', 33));
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setOrderId(str_repeat('*', 33));
+        $orderManaged->validate();
     }
 
     /**
@@ -90,9 +90,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithMissingAmount()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setAmount(null);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setAmount(null);
+        $orderManaged->validate();
     }
 
     /**
@@ -103,9 +103,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidAmount()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setAmount(0);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setAmount(0);
+        $orderManaged->validate();
     }
 
     /**
@@ -116,9 +116,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithMissingCurrency()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setCurrency(null);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setCurrency(null);
+        $orderManaged->validate();
     }
 
     /**
@@ -129,9 +129,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidCurrency()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setCurrency('invalid');
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setCurrency('invalid');
+        $orderManaged->validate();
     }
 
     /**
@@ -142,9 +142,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithMissingDescription()
     {
-        $orderPurchase = $this->getValidOrderPurchase(false);
-        $orderPurchase->setDescription(null);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged(false);
+        $orderManaged->setDescription(null);
+        $orderManaged->validate();
     }
 
     /**
@@ -155,9 +155,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidDescription()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setDescription(str_repeat('*', 65536));
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setDescription(str_repeat('*', 65536));
+        $orderManaged->validate();
     }
 
     /**
@@ -168,13 +168,13 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidOrderTag()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setOrderTags(
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setOrderTags(
             [
                 '!invalid'
             ]
         );
-        $orderPurchase->validate();
+        $orderManaged->validate();
     }
 
     /**
@@ -185,14 +185,14 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithRepeatedOrderTag()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setOrderTags(
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setOrderTags(
             [
                 'tag',
                 'tag',
             ]
         );
-        $orderPurchase->validate();
+        $orderManaged->validate();
     }
 
     /**
@@ -203,9 +203,9 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidBackUrl()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setBackUrl('!invalid');
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setBackUrl('!invalid');
+        $orderManaged->validate();
     }
 
     /**
@@ -216,12 +216,12 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithInvalidItemList()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setItemList(new ItemList([
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setItemList(new ItemList([
             new MockItem(),
             new MockItemLevel3(),
         ]));
-        $orderPurchase->validate();
+        $orderManaged->validate();
     }
 
     /**
@@ -232,22 +232,22 @@ class OrderPurchaseTest extends TestCase
      */
     public function testShouldFailValidationWithAmountNotMatchingItemsAmount()
     {
-        $orderPurchase = $this->getValidOrderPurchase();
-        $orderPurchase->setAmount(99.99);
-        $orderPurchase->validate();
+        $orderManaged = $this->getValidOrderManaged();
+        $orderManaged->setAmount(99.99);
+        $orderManaged->validate();
     }
 
     /**
-     * Method getValidOrderPurchase
+     * Method getValidOrderManaged
      *
      * @param bool $withItems
      *
-     * @return OrderPurchase
+     * @return OrderManaged
      */
-    protected function getValidOrderPurchase($withItems = true)
+    protected function getValidOrderManaged($withItems = true)
     {
-        $orderPurchase = new OrderPurchase();
-        $orderPurchase->setOrderId('order-id')
+        $orderManaged = new OrderManaged();
+        $orderManaged->setOrderId('order-id')
             ->setAmount(12.56)
             ->setCurrency(Currency::USD)
             ->setDescription('description')
@@ -259,9 +259,9 @@ class OrderPurchaseTest extends TestCase
                 ]
             );
         if ($withItems) {
-            $orderPurchase->setItemList(new MockItemList())
+            $orderManaged->setItemList(new MockItemList())
                 ->setLevel3(new MockLevel3Airline());
         }
-        return $orderPurchase;
+        return $orderManaged;
     }
 }

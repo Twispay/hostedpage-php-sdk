@@ -7,14 +7,14 @@ use Twispay\Entity\Order\OrderType;
 use Twispay\Exception\ValidationException;
 
 /**
- * Class MockOrderPurchase
+ * Class MockOrderManaged
  *
  * @category Mocks
  * @package Twispay
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class MockOrderPurchase implements OrderInterface
+class MockOrderManaged implements OrderInterface
 {
     /**
      * Method getOrderType
@@ -23,7 +23,7 @@ class MockOrderPurchase implements OrderInterface
      */
     public function getOrderType()
     {
-        return OrderType::PURCHASE;
+        return OrderType::MANAGED;
     }
 
     /**

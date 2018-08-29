@@ -10,6 +10,7 @@ use Twispay\Entity\Item\ItemList;
 use Twispay\Entity\Order\Currency;
 use Twispay\Entity\Order\IntervalType;
 use Twispay\Entity\Order\OrderRecurring;
+use Twispay\Entity\Order\OrderType;
 
 /**
  * Class OrderRecurringTest
@@ -29,7 +30,7 @@ class OrderRecurringTest extends TestCase
         $orderRecurring = $this->getValidOrderRecurring();
         $this->assertEquals(
             [
-                'orderType' => 'recurring',
+                'orderType' => OrderType::RECURRING,
                 'orderId' => 'order-id',
                 'amount' => 12.56,
                 'currency' => 'USD',

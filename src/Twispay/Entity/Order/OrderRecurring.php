@@ -15,7 +15,7 @@ use Twispay\Exception\ValidationException;
 class OrderRecurring extends OrderAbstract
 {
     /** @var string $orderType */
-    protected $orderType = 'recurring';
+    protected $orderType = OrderType::RECURRING;
 
     /** @var string $intervalType */
     protected $intervalType;
@@ -199,20 +199,18 @@ class OrderRecurring extends OrderAbstract
             throw new ValidationException('*trialAmount* is invalid, must be greater than 0.01 and match /^[0-9]+(\.[0-9]{1,2})?$/', ErrorCode::TRIAL_AMOUNT_INVALID);
         }
 
-        if (strlen($this->trialAmount) != 0) {
-            if (strlen($this->firstBillDate) == 0) {
+        if (strlen($this->firstBillDate) == 0) {
+            if (strlen($this->trialAmount) != 0) {
                 throw new ValidationException('*firstBillDate* is a required field', ErrorCode::FIRST_BILL_DATE_MISSING);
             }
-        }
-        $firstBillDate = \DateTime::createFromFormat(\DateTime::ATOM, $this->firstBillDate);
-        if (
-            (strlen($this->firstBillDate) != 0)
-            && (
+        } else {
+            $firstBillDate = \DateTime::createFromFormat(\DateTime::ATOM, $this->firstBillDate);
+            if (
                 !$firstBillDate
                 || ($firstBillDate->format(\DateTime::ATOM) != $this->firstBillDate)
-            )
-        ) {
-            throw new ValidationException('*firstBillDate* is invalid, must be in ISO-8601 UTC format', ErrorCode::FIRST_BILL_DATE_INVALID);
+            ) {
+                throw new ValidationException('*firstBillDate* is invalid, must be in ISO-8601 UTC format', ErrorCode::FIRST_BILL_DATE_INVALID);
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ use Twispay\Exception\ValidationException;
 class OrderPurchase extends OrderAbstract
 {
     /** @var string $orderType */
-    protected $orderType = 'purchase';
+    protected $orderType = OrderType::PURCHASE;
 
     /** @var Level3interface|null $level3 */
     protected $level3;

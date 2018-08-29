@@ -16,7 +16,7 @@ use Twispay\Exception\ValidationException;
 use Twispay\Payment;
 use Twispay\PaymentForm;
 
-require 'bootstrap.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 // should be read from your APP config
 $twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';

@@ -9,7 +9,7 @@
 use Twispay\Exception\ResponseException;
 use Twispay\Response;
 
-require 'bootstrap.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 // should be read from your APP config
 $twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';

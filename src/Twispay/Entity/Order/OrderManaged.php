@@ -9,7 +9,7 @@ namespace Twispay\Entity\Order;
  * @author Dragos URSU
  * @version GIT: $Id:$
  */
-class OrderManaged extends OrderPurchase
+class OrderManaged extends OrderAbstract
 {
     /** @var string $orderType */
     protected $orderType = OrderType::MANAGED;

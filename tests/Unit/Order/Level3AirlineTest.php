@@ -40,6 +40,8 @@ class Level3AirlineTest extends TestCase
 
     /**
      * Method testShouldPassValidation
+     *
+     * @throws \Twispay\Exception\ValidationException
      */
     public function testShouldPassValidation()
     {

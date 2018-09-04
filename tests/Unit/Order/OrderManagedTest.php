@@ -5,7 +5,6 @@ namespace Unit\Order;
 use Mocks\MockItem;
 use Mocks\MockItemLevel3;
 use Mocks\MockItemList;
-use Mocks\MockLevel3Airline;
 use PHPUnit\Framework\TestCase;
 use Twispay\Entity\Item\ItemList;
 use Twispay\Entity\Order\Currency;
@@ -41,7 +40,6 @@ class OrderManagedTest extends TestCase
                 ],
                 'backUrl' => 'http://sample.com',
                 'items' => 'sample',
-                'level3' => 'airline',
             ],
             $orderManaged->toArray()
         );
@@ -49,6 +47,8 @@ class OrderManagedTest extends TestCase
 
     /**
      * Method testShouldPassValidation
+     *
+     * @throws \Twispay\Exception\ValidationException
      */
     public function testShouldPassValidation()
     {
@@ -225,19 +225,6 @@ class OrderManagedTest extends TestCase
     }
 
     /**
-     * Method testShouldFailValidationWithAmountNotMatchingItemsAmount
-     *
-     * @expectedException \Twispay\Exception\ValidationException
-     * @expectedExceptionCode \Twispay\Entity\ErrorCode::LEVEL3_DATA_INVALID
-     */
-    public function testShouldFailValidationWithAmountNotMatchingItemsAmount()
-    {
-        $orderManaged = $this->getValidOrderManaged();
-        $orderManaged->setAmount(99.99);
-        $orderManaged->validate();
-    }
-
-    /**
      * Method getValidOrderManaged
      *
      * @param bool $withItems
@@ -259,8 +246,7 @@ class OrderManagedTest extends TestCase
                 ]
             );
         if ($withItems) {
-            $orderManaged->setItemList(new MockItemList())
-                ->setLevel3(new MockLevel3Airline());
+            $orderManaged->setItemList(new MockItemList());
         }
         return $orderManaged;
     }

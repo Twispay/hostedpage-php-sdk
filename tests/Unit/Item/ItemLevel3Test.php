@@ -38,6 +38,8 @@ class ItemLevel3Test extends TestCase
 
     /**
      * Method testShouldPassValidation
+     *
+     * @throws \Twispay\Exception\ValidationException
      */
     public function testShouldPassValidation()
     {

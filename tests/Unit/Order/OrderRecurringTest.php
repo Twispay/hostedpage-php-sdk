@@ -52,6 +52,8 @@ class OrderRecurringTest extends TestCase
 
     /**
      * Method testShouldPassValidation
+     *
+     * @throws \Twispay\Exception\ValidationException
      */
     public function testShouldPassValidation()
     {

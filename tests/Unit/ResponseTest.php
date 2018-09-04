@@ -45,6 +45,8 @@ class ResponseTest extends TestCase
 
     /**
      * Method testShouldDecodeResponseFromString
+     *
+     * @throws \Twispay\Exception\ResponseException
      */
     public function testShouldDecodeResponseFromString()
     {
@@ -57,6 +59,8 @@ class ResponseTest extends TestCase
 
     /**
      * Method testShouldDecodeResponseFromArray
+     *
+     * @throws \Twispay\Exception\ResponseException
      */
     public function testShouldDecodeResponseFromArray()
     {
@@ -73,6 +77,8 @@ class ResponseTest extends TestCase
 
     /**
      * Method testShouldDecodeResponseFromPostOverGet
+     *
+     * @throws \Twispay\Exception\ResponseException
      */
     public function testShouldDecodeResponseFromPostOverGet()
     {
@@ -86,6 +92,8 @@ class ResponseTest extends TestCase
 
     /**
      * Method testShouldDecodeResponseFromGet
+     *
+     * @throws \Twispay\Exception\ResponseException
      */
     public function testShouldDecodeResponseFromGet()
     {

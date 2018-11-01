@@ -13,6 +13,9 @@ use Exception;
  */
 class PaymentForm
 {
+    const LIVE = 'live';
+    const STAGE = 'stage';
+
     /** @var int $counter */
     static $counter = 0;
 
@@ -30,12 +33,12 @@ class PaymentForm
      *
      * @param PaymentInterface $payment
      * @param bool $isPopup
-     * @param array $config
+     * @param array|string $config
      */
     public function __construct(
         PaymentInterface $payment,
         $isPopup = false,
-        array $config = []
+        $config = self::LIVE
     )
     {
         $this->payment = $payment;
@@ -102,15 +105,20 @@ class PaymentForm
     /**
      * Method setConfig
      *
-     * @param array $config
+     * @param array|string $config
      *
      * @return PaymentForm
      */
     public function setConfig($config)
     {
         $twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-        $liveConfig = $twispayConfig['live'];
-        $this->config = array_merge($liveConfig, $config);
+        if (is_array($config)) {
+            $this->config = array_merge($twispayConfig[self::LIVE], $config);
+        } elseif (is_string($config) && ($config != self::LIVE) && isset($twispayConfig[$config])) {
+            $this->config = array_merge($twispayConfig[self::LIVE], $twispayConfig[$config]);
+        } else {
+            $this->config = $twispayConfig[self::LIVE];
+        }
         return $this;
     }
 

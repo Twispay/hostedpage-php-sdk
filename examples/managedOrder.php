@@ -15,14 +15,10 @@ use Twispay\PaymentForm;
 
 require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-// should be read from your APP config
-$twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-
 // site ID and secret key are provided by Twispay
 // replace those with your own
-$siteId = $twispayConfig['siteId'];
-$secretKey = $twispayConfig['secretKey'];
-$config = $twispayConfig['config'];
+$siteId = 1;
+$secretKey = 'cd07b3c95dc9a0c8e9318b29bdc13b03';
 
 // init customer object
 // you need to replace `unique-customer-ID` with your own current customer ID
@@ -90,7 +86,7 @@ try {
 $form = new PaymentForm(
     $payment,
     false,
-    $config
+    PaymentForm::STAGE
 );
 
 // make sure no extra fields are added to the form or they must be taken into account when computing the checksum

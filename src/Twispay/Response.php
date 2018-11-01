@@ -69,9 +69,8 @@ class Response
      * Response constructor.
      *
      * @param string $secretKey
-     * @param array $config
      */
-    public function __construct($secretKey = null, array $config = [])
+    public function __construct($secretKey = null)
     {
         $this->secretKey = $secretKey;
         $this->errors = [];

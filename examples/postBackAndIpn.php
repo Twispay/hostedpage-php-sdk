@@ -11,16 +11,12 @@ use Twispay\Response;
 
 require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-// should be read from your APP config
-$twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-
 // secret key is provided by Twispay
 // replace it with your own
-$secretKey = 'ea9521816d4fcf0c0a78052fa70c3df9';
-$config = $twispayConfig['config'];
+$secretKey = 'cd07b3c95dc9a0c8e9318b29bdc13b03';
 
 // init response object
-$response = new Response($secretKey, $config);
+$response = new Response($secretKey);
 
 // this will come from the request (it is put here only for example)
 // $encryptedResponse = $response->getEncryptedResponse();
@@ -33,8 +29,7 @@ try {
     throw $e;
 }
 
-// do something
-echo '<pre>';
+// echo response data
 echo 'Order unique identifier (externally provided): ' . $response->getExternalOrderId() . "\n";
 echo 'Order ID (Twispay ID): ' . $response->getOrderId() . "\n";
 echo 'Transaction ID (Twispay ID): ' . $response->getTransactionId() . "\n";
@@ -43,4 +38,3 @@ echo 'Customer unique identifier (externally provided): ' . $response->getIdenti
 echo 'Customer ID (Twispay ID): ' . $response->getCustomerId() . "\n";
 echo 'Amount: ' . $response->getAmount() . "\n";
 echo 'Currency: ' . $response->getCurrency() . "\n";
-echo '</pre>';

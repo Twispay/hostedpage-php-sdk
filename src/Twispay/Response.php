@@ -65,9 +65,6 @@ class Response
     /** @var string $secretKey */
     protected $secretKey;
 
-    /** @var array $config */
-    protected $config;
-
     /**
      * Response constructor.
      *
@@ -77,7 +74,6 @@ class Response
     public function __construct($secretKey = null, array $config = [])
     {
         $this->secretKey = $secretKey;
-        $this->setConfig($config);
         $this->errors = [];
         $this->customData = [];
         $this->customFields = [];
@@ -109,7 +105,7 @@ class Response
         }
         $decrypted = openssl_decrypt(
             $encryptedContent,
-            $this->config['sslAlgorithm'],
+            'aes-256-cbc',
             $decryptionKey,
             OPENSSL_RAW_DATA,
             $iv
@@ -125,7 +121,8 @@ class Response
      *
      * @param array $data
      */
-    protected function initFrom(array $data) {
+    protected function initFrom(array $data)
+    {
         $this->code = array_key_exists('code', $data) ? $data['code'] : null;
         $this->message = array_key_exists('message', $data) ? $data['message'] : null;
         $this->errors = array_key_exists('errors', $data) ? (array)$data['errors'] : [];
@@ -147,39 +144,40 @@ class Response
     /**
      * Method loadData
      *
-     * @param null|string|array $dataSource
+     * @param string $encryptedResponse
      *
      * @throws ResponseException
      */
-    public function loadData($dataSource = null)
+    public function loadData($encryptedResponse)
     {
-        if (is_null($dataSource)) {
-            $dataSource = empty($_POST['opensslResult'])
-                ? (
-                    empty($_GET['opensslResult'])
-                        ? null
-                        : $_GET['opensslResult']
-                )
-                : $_POST['opensslResult'];
-        } elseif (is_array($dataSource)) {
-            $dataSource = empty($dataSource['opensslResult'])
-                ? null
-                : $dataSource['opensslResult'];
-        } elseif (!is_scalar($dataSource) || (strlen($dataSource) == 0)) {
+        if (!is_scalar($encryptedResponse)) {
             throw new ResponseException('Invalid response data', ErrorCode::RESPONSE_INVALID_DATA);
         }
-        if (empty($dataSource)) {
+        $encryptedResponse = trim((string)$encryptedResponse);
+        if (empty($encryptedResponse)) {
             throw new ResponseException('Missing response data', ErrorCode::RESPONSE_MISSING);
         }
         if (strlen($this->secretKey) == 0) {
             throw new ResponseException("Can't decrypt response, missing secret key", ErrorCode::SECRET_KEY_MISSING);
         }
-        $data = $this->decrypt($dataSource, $this->secretKey);
+        $data = $this->decrypt($encryptedResponse, $this->secretKey);
         $data = json_decode($data, true, 4);
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new ResponseException('Invalid response data ' . json_last_error(), ErrorCode::RESPONSE_INVALID_DATA);
         }
         $this->initFrom($data);
+    }
+
+    /**
+     * Method getEncryptedResponse
+     *
+     * @return mixed|null
+     */
+    public function getEncryptedResponse()
+    {
+        return empty($_POST['opensslResult'])
+            ? (empty($_GET['opensslResult']) ? null : $_GET['opensslResult'])
+            : $_POST['opensslResult'];
     }
 
     /**
@@ -202,31 +200,6 @@ class Response
     public function setSecretKey($secretKey)
     {
         $this->secretKey = $secretKey;
-        return $this;
-    }
-
-    /**
-     * Method getConfig
-     *
-     * @return array
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * Method setConfig
-     *
-     * @param array $config
-     *
-     * @return Response
-     */
-    public function setConfig(array $config)
-    {
-        $twispayConfig = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-        $liveConfig = $twispayConfig['live'];
-        $this->config = array_merge($liveConfig, $config);
         return $this;
     }
 

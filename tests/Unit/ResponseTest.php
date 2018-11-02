@@ -16,6 +16,15 @@ use Twispay\Response;
 class ResponseTest extends TestCase
 {
     /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $_POST = $_GET = []; // cleanup
+    }
+
+    /**
      * Method testShouldFailDecodeResponseWithInvalidSecretKey
      *
      * @expectedException \Twispay\Exception\ResponseException
@@ -64,7 +73,6 @@ class ResponseTest extends TestCase
      */
     public function testShouldDecodeResponseFromPostOverGet()
     {
-        $_POST = $_GET = []; // cleanup
         $_POST['opensslResult'] = $this->getEncryptedResponse();
         $_GET['opensslResult'] = 'invalid-response';
         $response = new Response();
@@ -80,7 +88,6 @@ class ResponseTest extends TestCase
      */
     public function testShouldDecodeResponseFromGet()
     {
-        $_POST = $_GET = []; // cleanup
         $_GET['opensslResult'] = $this->getEncryptedResponse();
         $response = new Response();
         $response->setSecretKey($this->getSecretKey())

@@ -1,85 +1,13 @@
-# Twispay hosted payment page SDK for PHP
+# Twispay sample code for PHP
 
-## Introduction
+Run the sample code from the command line:
 
-The <b>Twispay hosted payment page SDK for PHP</b> make it easy for 
-developers to link to the Twispay hosted payment page from a third party website.
+- execute `php ./src/twispayOrder.php 'jsonOrderData' 'secretKey'` to generate and output the HTML form for a Twispay order, replacing `jsonOrderData` and `secretKey` with your values;
 
-Depending on the order type and the other parameters (like customer data etc.)
-a form with a submit button can be generated together with the required data checksum.
+  Example:
+  `php ./src/twispayOrder.php '{"cardTransactionMode":"authAndCapture","backUrl":"http:\/\/google.com","cardId":1,"siteId":1,"invoiceEmail":"john.doe@test.com","customData":{"key1":"value","key2":"value"},"customer":{"identifier":"identifier","firstName":"John","lastName":"Doe","country":"US","zipCode":"11222","address":"1st Street","city":"New York","phone":"0012120000000","state":"NY","email":"john.doe@test.com","tags":["customer_tag_1","customer_tag_2"]},"order":{"ticketNumber":"8V32EU","passengerName":"John Doe","amount":2194.99,"arrivalAirportCode":"OTP","orderId":"external-order-id","firstBillDate":"2020-10-02T12:00:00+00:00","type":"recurring","intervalValue":1,"tags":["tag_1","tag_2"],"flightNumber":"SQ619","intervalType":"month","travelAgencyName":"Elite Travel","travelAgencyCode":"19NOV05","trialAmount":1,"carrierCode":"American Airlines","level3Airline":{},"currency":"USD","departureDate":"2020-02-05T14:13:00+02:00","items":[{"unitPrice":34.99,"item":"1 year subscription on site","code":"xyz","units":1,"itemDescription":"1 year subscription on site","type":"digital","vatPercent":19},{"unitPrice":10.75,"item":"200 tokens","code":"abc","units":200,"itemDescription":"200 tokens","type":"digital","vatPercent":19},{"unitPrice":10,"item":"discount","code":"fgh","units":1,"itemDescription":"discount","type":"digital","vatPercent":19}],"departureAirportCode":"KIX"}}' 'cd07b3c95dc9a0c8e9318b29bdc13b03'`
 
-## Examples
+- execute `php ./src/twispayIpn.php 'jsonOrderData' 'secretKey'` to decrypt and output the received data from a IPN call, replacing `jsonOrderData` and `secretKey` with your values.
 
-Each payment require a customer ID (unique identifier) to be passed to Twispay.
-Recurring customers need to pass the same unique ID to be able to identify old customers
-inside Twispay.
-
-```php
-// instantiate a customer object
-$customer = new Customer('unique-customer-id');
-```
-Create a `purchase` order (from the two available ones, `purchase` and `recurring`).
-To be able to identify orders inside Twispay, a unique order ID need to be passed.
-
-```php
-// instantiate a purchase order object
-// total order amount and currency need to be set
-$order = new OrderPurchase('unique-order-id', 65.59, Currency::USD);
-```
-
-Either add order description or one or more order items.
-
-```php
-// set order description
-$order->setDescription('order description goes here');
-```
-
-```php
-// or add one or more order items 
-// together with their price (including VAT) and quantity
-$order->addItem(
-    new Item('item #1 description goes here', 12.59, 1)
-)->addItem(
-    new Item('item #2 description goes here', 26.50, 2)
-);
-```
-
-Instantiate a payment object, the `site` ID and the secret key are provided by Twispay. 
-
-```php
-// first two parameters are the site ID and the secret key
-$payment = new Payment(1, 'secret-key', $customer, $order);
- 
-// validate data to be sure it passes Twispay validation
-try {
-    $payment->validate();
-} catch (ValidationException $exception) {
-    // do something on validation error
-    throw $exception;
-}
-```
-
-Use the data (`array` format) and the calculated checksum to generate you own form and
-submit button or use the SDK.
-
-```php
-// generate the pay button and form
-$form = new PaymentForm($payment);
-echo $form->getHtmlForm();
-```
-
-```php
-// or make something with the data
-$formData = $payment->toArray();
-
-// get the checksum
-$checksum = $payment->getChecksum();
-```
-The form fields names are the same as the keys set in the array returned by 
-the call to `Payment::toArray()`. The checksum need to be sent using the name
-`checksum` for the respective form field.
-
-<b>Note:</b> If you want to generate the form with your own code then
-make sure no other form fields are sent with the POST request
-to Twispay, otherwise the checksum you send over will not match with the one
-computed by Twispay.
+  Example:
+  `php ./src/twispayIpn.php 'oUrO8wW0IXK1yj9F8RYbHw==,Hrw4AkEt+DBALL4P9gNDyBxkvnjh3wxlgAdqe1jVffEGrwpEpCKc3eYjR4l+mi9dCxPuvXRceVgqd7ypn9aXGLXejxClumv4l2Ym2djbpsi2PFRWyWXHoJar+NX8aLU/yCYdHUoNtvoZRA2RI13IUCLZZ1znlQdyEL9NXQTEAxrbZe7a4vmYbUDBosAiIfApGLGMWQG/OF+ebukvLeZGajzUbhbp69k8/UD03dT8NBDMSos5XayJNnEibM2unImh6tcOek5prenHQOqkIv7TeGfC3HQDxUgXH2Rw8j+7Kyu/p72AYTCvXrJOoAVJ00KKDXTi4xu7+a5VJwP/tpdLz5jeoIfivzgxPP9I/o72OhSrdAZcxPQ5YjbyS22IXhz7G1MkHX0ItytWRqKyfXjq+58LS2ovlQu3eYhoftfBjsq3xisdjqTld9V+DL97qCcWzHo7hscMLO7/5nrXsGiSY16PZ6tUtqe9lI4ErvC+71iH+i44NijMTXMt9uX01V/4Wqlz8m5sDE4Nl0uM31eV2M1MvLKyV1tntj78WREX/mpuqclD8wWO+weglzqfyaF/' 'cd07b3c95dc9a0c8e9318b29bdc13b03'`

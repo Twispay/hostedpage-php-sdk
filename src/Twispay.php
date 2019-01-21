@@ -1,11 +1,16 @@
 <?php
 
+/**
+ * The Twispay class implements methods to get the value
+ * of `jsonRequest` and `checksum` that need to be sent by POST
+ * when making a Twispay order and to decrypt the Twispay IPN response.
+ */
 class Twispay
 {
     /**
-     * Method getBase64JsonRequest
+     * Get the `jsonRequest` parameter (order parameters as JSON and base64 encoded).
      *
-     * @param array $orderData
+     * @param array $orderData The order parameters.
      *
      * @return string
      */
@@ -15,10 +20,10 @@ class Twispay
     }
 
     /**
-     * Method getBase64Checksum
+     * Get the `checksum` parameter (the checksum computed over the `jsonRequest` and base64 encoded).
      *
-     * @param array $orderData
-     * @param string $secretKey
+     * @param array $orderData The order parameters.
+     * @param string $secretKey The secret key (from Twispay).
      *
      * @return string
      */
@@ -29,33 +34,10 @@ class Twispay
     }
 
     /**
-     * Method getHtmlOrderForm
-     *
-     * @param array $orderData
-     * @param string $secretKey
-     * @param bool $twispayLive
-     *
-     * @return string
-     */
-    public static function getHtmlOrderForm(array $orderData, $secretKey, $twispayLive = false)
-    {
-        $base64JsonRequest = self::getBase64JsonRequest($orderData);
-        $base64Checksum = self::getBase64Checksum($orderData, $secretKey);
-        $hostName = $twispayLive ? "secure.twispay.com" : "secure-stage.twispay.com";
-        return <<<FORM
-<form action="https://{$hostName}" method="post" accept-charset="UTF-8">
-    <input type="hidden" name="jsonRequest" value="{$base64JsonRequest}">
-    <input type="hidden" name="checksum" value="{$base64Checksum}">
-    <input type="submit" value="Pay">
-</form>
-FORM;
-    }
-
-    /**
-     * Method decryptIpnResponse
+     * Decrypt the IPN response from Twispay.
      *
      * @param string $encryptedIpnResponse
-     * @param string $secretKey
+     * @param string $secretKey The secret key (from Twispay).
      *
      * @return array
      */

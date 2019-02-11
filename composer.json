@@ -6,7 +6,9 @@
       "name": "Dragos Ursu"
     }
   ],
-  "require": {},
+  "require": {
+    "ext-json": "^1.5"
+  },
   "config": {
     "platform": {
       "php": "5.6.1"
